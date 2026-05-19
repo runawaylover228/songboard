@@ -1055,6 +1055,11 @@ document.getElementById('signupBtn').onclick = async () => {
   try {
     const { data, error } = await sb.auth.signUp({ email, password });
     if (error) throw error;
+    if (!data || !data.user) {
+      setAuthError('That email may already be registered. Try logging in instead, or use a different email.');
+      btn.disabled=false; btn.textContent='Create Account';
+      return;
+    }
     const { error: profErr } = await sb.from('profiles').insert({
       id: data.user.id, display_name: displayName,
       username, bio: '', avatar_color: authSelColor
