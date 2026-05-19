@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https: data:; frame-src https://embed.music.apple.com; connect-src https://itunes.apple.com;">
   <title>Songboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js"></script>
+  <script>
+    /* Supabase stubs — replaced with real calls once SETUP.md is completed */
+    function submitSafetyReport() { return Promise.reject(new Error('Supabase not configured yet.')); }
+    function logAgeVerification() { return Promise.resolve(); }
+    function requestParentalConsent() { return Promise.reject(new Error('Supabase not configured yet.')); }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
