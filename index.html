@@ -1116,40 +1116,48 @@ async function loadUserData() {
 }
 
 async function loadPostsFromSupabase() {
-  const { data, error } = await sb
+  const { data: rawPosts, error } = await sb
     .from('posts')
-    .select('*, profiles(username, display_name, avatar_color)')
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(50);
   if (error) { console.error('Failed to load posts:', error); renderFeed(); return; }
+  if (!rawPosts || !rawPosts.length) { posts = []; renderFeed(); return; }
 
-  const ids = data.map(p=>p.id);
-  let likeRows=[], cmtRows=[];
-  if (ids.length) {
-    [{ data: likeRows }, { data: cmtRows }] = await Promise.all([
-      sb.from('likes').select('post_id, user_id').in('post_id', ids),
-      sb.from('comments').select('post_id').in('post_id', ids)
-    ]);
-    likeRows = likeRows||[]; cmtRows = cmtRows||[];
-  }
+  // Manual joins (PostgREST embed is ambiguous with our FK setup)
+  const userIds = [...new Set(rawPosts.map(p => p.user_id))];
+  const ids     = rawPosts.map(p => p.id);
+
+  const [{ data: profilesData }, { data: likeRows }, { data: cmtRows }] = await Promise.all([
+    sb.from('profiles').select('id, username, display_name, avatar_color').in('id', userIds),
+    sb.from('likes').select('post_id, user_id').in('post_id', ids),
+    sb.from('comments').select('post_id').in('post_id', ids)
+  ]);
+
+  const profileMap = {};
+  (profilesData||[]).forEach(p => { profileMap[p.id] = p; });
+
   const likeCounts={}, userLiked=new Set(), cmtCounts={};
-  likeRows.forEach(l=>{ likeCounts[l.post_id]=(likeCounts[l.post_id]||0)+1; if(l.user_id===currentUser.id) userLiked.add(l.post_id); });
-  cmtRows.forEach(c=>{ cmtCounts[c.post_id]=(cmtCounts[c.post_id]||0)+1; });
+  (likeRows||[]).forEach(l=>{ likeCounts[l.post_id]=(likeCounts[l.post_id]||0)+1; if(l.user_id===currentUser.id) userLiked.add(l.post_id); });
+  (cmtRows||[]).forEach(c=>{ cmtCounts[c.post_id]=(cmtCounts[c.post_id]||0)+1; });
 
-  posts = data.map(p => ({
-    id: p.id, type: p.post_type,
-    song: { name: p.song_name, artist: p.song_artist, album: p.song_album, art: p.song_art, embedUrl: p.song_embed_url },
-    caption: p.caption||'', tags: p.tags||[],
-    authorName: p.profiles?.display_name||'Anonymous',
-    authorUsername: p.profiles?.username||null,
-    authorColor: p.profiles?.avatar_color||'#7c3aed',
-    originalAuthorName: p.original_author_name,
-    originalAuthorColor: p.original_author_color,
-    roomName: p.room_name, roomId: p.room_id,
-    likes: likeCounts[p.id]||0, liked: userLiked.has(p.id),
-    reblogs: 0, comments: [], _commentCount: cmtCounts[p.id]||0,
-    createdAt: new Date(p.created_at).getTime()
-  }));
+  posts = rawPosts.map(p => {
+    const prof = profileMap[p.user_id];
+    return {
+      id: p.id, type: p.post_type,
+      song: { name: p.song_name, artist: p.song_artist, album: p.song_album, art: p.song_art, embedUrl: p.song_embed_url },
+      caption: p.caption||'', tags: p.tags||[],
+      authorName: prof?.display_name||'Anonymous',
+      authorUsername: prof?.username||null,
+      authorColor: prof?.avatar_color||'#7c3aed',
+      originalAuthorName: p.original_author_name,
+      originalAuthorColor: p.original_author_color,
+      roomName: p.room_name, roomId: p.room_id,
+      likes: likeCounts[p.id]||0, liked: userLiked.has(p.id),
+      reblogs: 0, comments: [], _commentCount: cmtCounts[p.id]||0,
+      createdAt: new Date(p.created_at).getTime()
+    };
+  });
   renderFeed();
 }
 

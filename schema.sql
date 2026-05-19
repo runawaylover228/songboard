@@ -1,12 +1,21 @@
 -- ============================================================
--- Songboard — Supabase Database Schema
--- Safe to run multiple times (idempotent).
+-- Songboard — Supabase Database Schema (clean reset)
+-- Run this entire file in your Supabase SQL Editor.
+-- It drops and re-creates all songboard tables.
 -- (Dashboard → SQL Editor → New query → paste → Run)
 -- ============================================================
 
+-- Drop in dependency order
+drop table if exists comments cascade;
+drop table if exists likes cascade;
+drop table if exists posts cascade;
+drop table if exists profiles cascade;
+drop table if exists safety_reports cascade;
+drop table if exists age_verification_log cascade;
+
 -- ── Profiles ─────────────────────────────────────────────────
-create table if not exists profiles (
-  id           uuid references auth.users primary key,
+create table profiles (
+  id           uuid references auth.users on delete cascade primary key,
   username     text unique not null check (char_length(username) >= 2),
   display_name text not null,
   bio          text not null default '',
@@ -14,17 +23,15 @@ create table if not exists profiles (
   created_at   timestamptz not null default now()
 );
 alter table profiles enable row level security;
-drop policy if exists "Anyone can view profiles"     on profiles;
-drop policy if exists "Users can insert own profile" on profiles;
-drop policy if exists "Users can update own profile" on profiles;
 create policy "Anyone can view profiles"     on profiles for select using (true);
 create policy "Users can insert own profile" on profiles for insert with check (auth.uid() = id);
 create policy "Users can update own profile" on profiles for update using (auth.uid() = id);
 
 -- ── Posts ────────────────────────────────────────────────────
-create table if not exists posts (
+-- user_id references profiles so PostgREST can auto-join.
+create table posts (
   id                    uuid primary key default gen_random_uuid(),
-  user_id               uuid references auth.users not null,
+  user_id               uuid references profiles(id) on delete cascade not null,
   post_type             text not null check (post_type in ('post', 'reblog', 'room')),
   song_name             text not null,
   song_artist           text,
@@ -41,47 +48,38 @@ create table if not exists posts (
   created_at            timestamptz not null default now()
 );
 alter table posts enable row level security;
-drop policy if exists "Anyone can view posts"       on posts;
-drop policy if exists "Auth users can insert posts" on posts;
-drop policy if exists "Users can delete own posts"  on posts;
 create policy "Anyone can view posts"       on posts for select using (true);
 create policy "Auth users can insert posts" on posts for insert with check (auth.uid() = user_id);
 create policy "Users can delete own posts"  on posts for delete using (auth.uid() = user_id);
 
 -- ── Likes ────────────────────────────────────────────────────
-create table if not exists likes (
-  user_id uuid references auth.users,
+create table likes (
+  user_id uuid references profiles(id) on delete cascade,
   post_id uuid references posts(id) on delete cascade,
   primary key (user_id, post_id)
 );
 alter table likes enable row level security;
-drop policy if exists "Anyone can view likes" on likes;
-drop policy if exists "Auth users can like"   on likes;
-drop policy if exists "Users can unlike"      on likes;
 create policy "Anyone can view likes" on likes for select using (true);
 create policy "Auth users can like"   on likes for insert with check (auth.uid() = user_id);
 create policy "Users can unlike"      on likes for delete using (auth.uid() = user_id);
 
 -- ── Comments ─────────────────────────────────────────────────
-create table if not exists comments (
+create table comments (
   id           uuid primary key default gen_random_uuid(),
   post_id      uuid references posts(id) on delete cascade,
-  user_id      uuid references auth.users,
+  user_id      uuid references profiles(id) on delete cascade,
   author_name  text,
   author_color text,
   body         text not null check (char_length(body) > 0 and char_length(body) <= 300),
   created_at   timestamptz not null default now()
 );
 alter table comments enable row level security;
-drop policy if exists "Anyone can view comments"      on comments;
-drop policy if exists "Auth users can comment"        on comments;
-drop policy if exists "Users can delete own comments" on comments;
 create policy "Anyone can view comments"      on comments for select using (true);
 create policy "Auth users can comment"        on comments for insert with check (auth.uid() = user_id);
 create policy "Users can delete own comments" on comments for delete using (auth.uid() = user_id);
 
 -- ── Safety Reports ───────────────────────────────────────────
-create table if not exists safety_reports (
+create table safety_reports (
   id            uuid primary key default gen_random_uuid(),
   created_at    timestamptz not null default now(),
   report_type   text not null check (report_type in (
@@ -95,11 +93,10 @@ create table if not exists safety_reports (
   admin_notes   text
 );
 alter table safety_reports enable row level security;
-drop policy if exists "Anyone can submit a report" on safety_reports;
 create policy "Anyone can submit a report" on safety_reports for insert to anon with check (true);
 
 -- ── Age Verification Log ─────────────────────────────────────
-create table if not exists age_verification_log (
+create table age_verification_log (
   id          uuid primary key default gen_random_uuid(),
   created_at  timestamptz not null default now(),
   outcome     text not null check (outcome in ('verified', 'blocked')),
@@ -107,12 +104,11 @@ create table if not exists age_verification_log (
   session_id  text
 );
 alter table age_verification_log enable row level security;
-drop policy if exists "Anyone can log an age check" on age_verification_log;
 create policy "Anyone can log an age check" on age_verification_log for insert to anon with check (true);
 
 -- ── Indexes ──────────────────────────────────────────────────
-create index if not exists idx_posts_user    on posts (user_id, created_at desc);
-create index if not exists idx_posts_created on posts (created_at desc);
-create index if not exists idx_likes_post    on likes (post_id);
-create index if not exists idx_comments_post on comments (post_id, created_at asc);
-create index if not exists idx_safety_status on safety_reports (status, created_at desc);
+create index idx_posts_user    on posts (user_id, created_at desc);
+create index idx_posts_created on posts (created_at desc);
+create index idx_likes_post    on likes (post_id);
+create index idx_comments_post on comments (post_id, created_at asc);
+create index idx_safety_status on safety_reports (status, created_at desc);
