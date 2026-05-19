@@ -599,6 +599,12 @@ function closeCompose() {
 
 document.getElementById('postBtn').onclick = async () => {
   if (!selSong) return;
+  if (MODE === 'supabase' && !profile) {
+    toast('Set up your profile first.');
+    closeCompose();
+    openProfileSetup(false);
+    return;
+  }
   const caption = document.getElementById('captionInput').value.trim();
   const tags    = document.getElementById('tagsInput').value.split(',').map(t=>t.trim()).filter(Boolean);
   const btn     = document.getElementById('postBtn');
@@ -1109,9 +1115,12 @@ async function loadUserData() {
   const { data: prof } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
   if (prof) {
     profile = { displayName: prof.display_name, username: prof.username, bio: prof.bio||'', color: prof.avatar_color };
+  } else {
+    profile = null;
   }
   renderNavAvatar();
   document.getElementById('logoutBtn').style.display = '';
+  if (!profile) openProfileSetup(false);
   await loadPostsFromSupabase();
 }
 
