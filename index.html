@@ -277,9 +277,81 @@
     ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
     @media (max-width: 600px) { .room-chat { display: none; } }
+
+    /* AGE GATE */
+    .age-screen {
+      display: none; position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg); flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px; text-align: center;
+    }
+    .age-screen.show { display: flex; }
+    .age-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 40px 36px;
+      width: min(420px, 100%); display: flex; flex-direction: column;
+      gap: 20px; align-items: center;
+    }
+    .age-logo { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
+    .age-logo span { color: var(--text); }
+    .age-box h2 { font-size: 1.15rem; font-weight: 700; line-height: 1.4; }
+    .age-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    .age-year-row { display: flex; gap: 10px; width: 100%; }
+    .age-year-row input {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 12px 14px;
+      font-size: 1.1rem; text-align: center; outline: none; letter-spacing: 2px;
+    }
+    .age-year-row input:focus { border-color: var(--accent); }
+    .age-confirm-btn {
+      width: 100%; background: var(--accent2); color: #fff; border: none;
+      border-radius: 10px; padding: 13px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .age-confirm-btn:hover { background: var(--accent); }
+    .age-fine-print { font-size: 0.75rem; color: var(--muted); }
+
+    /* BLOCKED SCREEN */
+    .blocked-screen {
+      display: none; position: fixed; inset: 0; z-index: 9000;
+      background: var(--bg); flex-direction: column;
+      align-items: center; justify-content: center; padding: 24px; text-align: center;
+    }
+    .blocked-screen.show { display: flex; }
+    .blocked-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 40px 36px; width: min(420px, 100%);
+      display: flex; flex-direction: column; gap: 16px; align-items: center;
+    }
+    .blocked-icon { font-size: 3rem; }
+    .blocked-box h2 { font-size: 1.2rem; font-weight: 800; }
+    .blocked-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
   </style>
 </head>
 <body>
+
+<!-- AGE GATE -->
+<div class="age-screen" id="ageScreen">
+  <div class="age-box">
+    <div class="age-logo">song<span>board</span></div>
+    <h2>Before you continue,<br>what year were you born?</h2>
+    <p>Songboard is only for people aged 13 and older. We ask to keep everyone safe.</p>
+    <div class="age-year-row">
+      <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" maxlength="4" />
+    </div>
+    <button class="age-confirm-btn" id="ageConfirmBtn">Continue</button>
+    <div class="age-fine-print">Your birth year is used only to check your age and is never stored or shared.</div>
+  </div>
+</div>
+
+<!-- BLOCKED SCREEN -->
+<div class="blocked-screen" id="blockedScreen">
+  <div class="blocked-box">
+    <div class="blocked-icon">🔒</div>
+    <h2>Sorry, Songboard isn't for you yet</h2>
+    <p>Songboard is only available to people aged 13 and older.<br><br>We made this decision to keep younger users safe online. Come back when you're older — the music will still be here.</p>
+  </div>
+</div>
 
 <nav>
   <div class="logo">song<span>board</span></div>
@@ -412,6 +484,41 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // ─── AGE GATE (runs before everything) ───────────────────────────────────────
+  (function() {
+    const status = localStorage.getItem('sb_age');
+    if (status === 'blocked') {
+      document.getElementById('blockedScreen').classList.add('show');
+      return;
+    }
+    if (status === 'verified') return;
+
+    // Not yet checked — show age gate
+    document.getElementById('ageScreen').classList.add('show');
+
+    document.getElementById('ageConfirmBtn').onclick = function() {
+      const yearVal = parseInt(document.getElementById('birthYear').value, 10);
+      const currentYear = new Date().getFullYear();
+      if (!yearVal || yearVal < 1900 || yearVal > currentYear) {
+        document.getElementById('birthYear').style.borderColor = 'var(--danger)';
+        return;
+      }
+      const age = currentYear - yearVal;
+      if (age < 13) {
+        try { localStorage.setItem('sb_age', 'blocked'); } catch(e) {}
+        document.getElementById('ageScreen').classList.remove('show');
+        document.getElementById('blockedScreen').classList.add('show');
+      } else {
+        try { localStorage.setItem('sb_age', 'verified'); } catch(e) {}
+        document.getElementById('ageScreen').classList.remove('show');
+      }
+    };
+
+    document.getElementById('birthYear').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') document.getElementById('ageConfirmBtn').click();
+    });
+  })();
+
   // ─── CONSTANTS ────────────────────────────────────────────────────────────────
   const AVATAR_COLORS = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#ca8a04','#dc2626','#0891b2'];
   const EMBED_ORIGIN = 'embed.music.apple.com';
