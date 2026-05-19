@@ -337,14 +337,14 @@
   <div class="age-box">
     <div class="age-logo">song<span>board</span></div>
     <h2>Before you continue,<br>what year were you born?</h2>
-    <p>Songboard is only for people aged 13 and older. We ask to keep everyone safe.</p>
+    <p>Songboard is only for people aged 18 and older. We ask to keep everyone safe.</p>
     <div class="age-year-row">
       <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" maxlength="4" />
     </div>
     <button class="age-confirm-btn" id="ageConfirmBtn">Continue</button>
     <div class="age-fine-print">
       Your birth year is used only to verify your age and is never saved or shared.<br>
-      Songboard requires users to be 13 or older in compliance with <strong>COPPA</strong>.<br>
+      Songboard is only available to users aged 18 and older.<br>
       By continuing you agree to our <a href="terms.html" style="color:var(--accent)">Terms of Service</a> and <a href="privacy.html" style="color:var(--accent)">Privacy Policy</a>.
     </div>
   </div>
@@ -355,7 +355,7 @@
   <div class="blocked-box">
     <div class="blocked-icon">🔒</div>
     <h2>Sorry, Songboard isn't for you yet</h2>
-    <p>Songboard is only available to people aged 13 and older.<br><br>We made this decision to keep younger users safe online. Come back when you're older — the music will still be here.</p>
+    <p>Songboard is only available to people aged 18 and older.<br><br>We made this decision to keep younger users safe online. Come back when you're older — the music will still be here.</p>
   </div>
 </div>
 
@@ -516,7 +516,7 @@
     <a href="safety.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Safety</a>
     <a href="#" data-open-safety style="color:var(--danger);text-decoration:none;margin:0 10px;font-weight:600">🚨 Report a Safety Issue</a>
   </div>
-  <div>© 2026 Songboard &nbsp;·&nbsp; For users aged 13 and older &nbsp;·&nbsp; <a href="safety.html" style="color:var(--muted);text-decoration:none">Child safety resources</a></div>
+  <div>© 2026 Songboard &nbsp;·&nbsp; For users aged 18 and older &nbsp;·&nbsp; <a href="safety.html" style="color:var(--muted);text-decoration:none">Child safety resources</a></div>
 </footer>
 
 <div class="toast" id="toast"></div>
@@ -542,16 +542,14 @@
         return;
       }
       const age = currentYear - yearVal;
-      if (age < 13) {
+      if (age < 18) {
         try { localStorage.setItem('sb_age', 'blocked'); } catch(e) {}
-        const bracket = 'under_13';
-        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'blocked', ageBracket: bracket });
+        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'blocked', ageBracket: age < 13 ? 'under_13' : '13_to_17' });
         document.getElementById('ageScreen').classList.remove('show');
         document.getElementById('blockedScreen').classList.add('show');
       } else {
         try { localStorage.setItem('sb_age', 'verified'); } catch(e) {}
-        const bracket = age < 18 ? '13_to_17' : '18_plus';
-        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'verified', ageBracket: bracket });
+        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'verified', ageBracket: '18_plus' });
         document.getElementById('ageScreen').classList.remove('show');
       }
     };
