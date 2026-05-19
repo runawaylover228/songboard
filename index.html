@@ -340,7 +340,11 @@
       <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" maxlength="4" />
     </div>
     <button class="age-confirm-btn" id="ageConfirmBtn">Continue</button>
-    <div class="age-fine-print">Your birth year is used only to check your age and is never stored or shared.</div>
+    <div class="age-fine-print">
+      Your birth year is used only to verify your age and is never saved or shared.<br>
+      Songboard requires users to be 13 or older in compliance with <strong>COPPA</strong>.<br>
+      By continuing you agree to our <a href="terms.html" style="color:var(--accent)">Terms of Service</a> and <a href="privacy.html" style="color:var(--accent)">Privacy Policy</a>.
+    </div>
   </div>
 </div>
 
@@ -481,6 +485,17 @@
 
 <!-- FEED -->
 <div class="layout"><div id="feed"></div></div>
+
+<footer style="border-top:1px solid var(--border);padding:28px 24px;text-align:center;color:var(--muted);font-size:0.82rem;margin-top:32px">
+  <div style="margin-bottom:10px">
+    <a href="privacy.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Privacy Policy</a>
+    <a href="terms.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Terms of Service</a>
+    <a href="safety.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Safety</a>
+    <a href="mailto:songboard-safety@proton.me" style="color:var(--muted);text-decoration:none;margin:0 10px">Report a Safety Issue</a>
+  </div>
+  <div>© 2026 Songboard &nbsp;·&nbsp; For users aged 13 and older &nbsp;·&nbsp; <a href="safety.html" style="color:var(--muted);text-decoration:none">Child safety resources</a></div>
+</footer>
+
 <div class="toast" id="toast"></div>
 
 <script>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Safety — Songboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0e0e12; --surface: #1a1a22; --surface2: #22222e;
+      --border: #2e2e3e; --accent: #a78bfa; --text: #e2e2f0;
+      --muted: #888899; --danger: #f87171; --green: #4ade80;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
+    nav {
+      position: sticky; top: 0; background: rgba(14,14,18,0.95);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 16px;
+    }
+    .logo { font-size: 1.2rem; font-weight: 800; color: var(--accent); text-decoration: none; }
+    .logo span { color: var(--text); }
+    nav a { color: var(--muted); font-size: 0.88rem; text-decoration: none; }
+    nav a:hover { color: var(--text); }
+    .page { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 40px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 36px 0 12px; color: var(--accent); }
+    p { color: #c8c8dc; margin-bottom: 14px; }
+    ul { color: #c8c8dc; padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 8px; }
+    a { color: var(--accent); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; margin-bottom: 16px;
+    }
+    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .card p { margin: 0; font-size: 0.9rem; color: var(--muted); }
+    .card a { display: inline-block; margin-top: 10px; font-weight: 600; font-size: 0.9rem; }
+    .urgent {
+      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 12px; padding: 24px; margin-bottom: 16px;
+    }
+    .urgent h3 { font-size: 1rem; font-weight: 700; color: var(--danger); margin-bottom: 8px; }
+    .urgent p { margin: 0; font-size: 0.9rem; color: #c8c8dc; }
+    .urgent a { color: var(--danger); display: inline-block; margin-top: 10px; font-weight: 700; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 520px) { .grid { grid-template-columns: 1fr; } }
+    .tip {
+      background: rgba(167,139,250,0.07); border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 10px; padding: 16px;
+    }
+    .tip .tip-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .tip h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+    .tip p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; color: var(--muted); font-size: 0.82rem; }
+    footer a { color: var(--muted); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html">song<span>board</span></a>
+  <a href="index.html">← Back to app</a>
+</nav>
+
+<div class="page">
+  <h1>Safety on Songboard</h1>
+  <div class="subtitle">Your safety — and especially the safety of younger users — is our top priority.</div>
+
+  <h2>Report Something</h2>
+
+  <div class="urgent">
+    <h3>🚨 Child Safety Emergency</h3>
+    <p>If you have encountered child sexual abuse material (CSAM), grooming, or any content that endangers a child, report it immediately to authorities — do not wait.</p>
+    <a href="https://www.cybertipline.org" target="_blank" rel="noopener noreferrer">Report to NCMEC CyberTipline →</a><br>
+    <a href="https://www.missingkids.org" target="_blank" rel="noopener noreferrer">National Center for Missing &amp; Exploited Children →</a><br>
+    <a href="https://www.fbi.gov/tips" target="_blank" rel="noopener noreferrer">Report to the FBI →</a>
+  </div>
+
+  <div class="card">
+    <h3>📧 Contact Songboard Safety Team</h3>
+    <p>To report a safety issue directly to us — including underage users, harassment, or harmful content — email our safety team. We aim to respond within 24 hours.</p>
+    <a href="mailto:songboard-safety@proton.me">songboard-safety@proton.me</a>
+    <p style="margin-top:8px;font-size:0.82rem;color:var(--muted)">(Update this address before going public)</p>
+  </div>
+
+  <h2>Who Can Use Songboard</h2>
+  <p>Songboard is only for people aged <strong>13 and older</strong>. This is a firm requirement, not a suggestion. Anyone under 13 who attempts to join is blocked from the platform entirely.</p>
+  <p>If you are a parent and believe your child under 13 has accessed Songboard, please email <a href="mailto:songboard-safety@proton.me">songboard-safety@proton.me</a> immediately.</p>
+
+  <h2>Our Commitments</h2>
+  <ul>
+    <li><strong>No data collection from children.</strong> We comply with COPPA and collect no personal data from users under 13.</li>
+    <li><strong>Zero tolerance for CSAM.</strong> Any child sexual abuse material is immediately reported to NCMEC and law enforcement.</li>
+    <li><strong>No advertising targeting.</strong> We run no ads, and we never use your data for targeting of any kind.</li>
+    <li><strong>No dark patterns.</strong> We do not use manipulative design to keep you on the platform longer than you want to be.</li>
+    <li><strong>Transparency.</strong> Our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Service</a> are written in plain language.</li>
+  </ul>
+
+  <h2>Staying Safe Online</h2>
+  <div class="grid">
+    <div class="tip">
+      <div class="tip-icon">🔒</div>
+      <h4>Protect your identity</h4>
+      <p>Don't share your real name, school, location, or phone number in your profile or posts.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🚩</div>
+      <h4>Trust your instincts</h4>
+      <p>If something feels wrong or uncomfortable, it probably is. Report it and step away.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">💬</div>
+      <h4>Talk to someone you trust</h4>
+      <p>If someone online makes you uncomfortable, tell a parent, guardian, or trusted adult.</p>
+    </div>
+    <div class="tip">
+      <div class="tip-icon">🛑</div>
+      <h4>Never meet strangers alone</h4>
+      <p>Never agree to meet someone in person that you only know from online, especially alone.</p>
+    </div>
+  </div>
+
+  <h2>External Resources</h2>
+  <ul>
+    <li><a href="https://www.stopbullying.gov" target="_blank" rel="noopener noreferrer">StopBullying.gov</a> — US government resource on cyberbullying</li>
+    <li><a href="https://www.cybertipline.org" target="_blank" rel="noopener noreferrer">NCMEC CyberTipline</a> — Report child exploitation online</li>
+    <li><a href="https://www.internetmatters.org" target="_blank" rel="noopener noreferrer">Internet Matters</a> — Online safety advice for families</li>
+    <li><a href="https://www.connectsafely.org" target="_blank" rel="noopener noreferrer">ConnectSafely</a> — Research-based safety tips</li>
+    <li><a href="https://www.fbi.gov/tips" target="_blank" rel="noopener noreferrer">FBI Tips</a> — Report online crimes</li>
+  </ul>
+</div>
+
+<footer>
+  <a href="index.html">Home</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="safety.html">Safety</a>
+  <br><br>
+  © 2026 Songboard. For users aged 13+.
+</footer>
+</body>
+</html>
