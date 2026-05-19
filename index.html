@@ -704,11 +704,21 @@ document.getElementById('saveProfileBtn').onclick = async () => {
   if (!displayName||!username) { toast('Name and username are required.'); return; }
 
   if (MODE === 'supabase') {
+    const { data: { user }, error: userErr } = await sb.auth.getUser();
+    if (userErr || !user) {
+      toast('Session expired — please log in again.');
+      await sb.auth.signOut();
+      return;
+    }
+    currentUser = user;
+    console.log('[Profile save] user.id =', user.id, 'username =', username);
     const { error } = await sb.from('profiles').upsert({
-      id: currentUser.id, display_name: displayName, username, bio, avatar_color: selColor
+      id: user.id, display_name: displayName, username, bio, avatar_color: selColor
     });
     if (error) {
-      toast(error.code==='23505' ? 'Username already taken. Try another.' : 'Save failed: '+error.message);
+      console.error('[Profile save error]', error);
+      if (error.code === '23505') toast('Username already taken. Try another.');
+      else toast('Save failed: ' + error.message);
       return;
     }
   }
