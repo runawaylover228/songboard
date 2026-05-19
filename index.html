@@ -254,6 +254,81 @@
     .spinner.visible { display: inline-block; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* AVATAR */
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; flex-shrink: 0; cursor: pointer;
+      border: 2px solid transparent; transition: border-color 0.15s;
+      user-select: none;
+    }
+    .avatar:hover { border-color: var(--accent); }
+    .avatar.large { width: 72px; height: 72px; font-size: 1.8rem; cursor: default; }
+    .avatar.large:hover { border-color: transparent; }
+    .avatar.small { width: 28px; height: 28px; font-size: 0.8rem; cursor: default; flex-shrink: 0; }
+
+    /* NAV PROFILE */
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    nav .new-post-btn { background: var(--accent2); }
+
+    /* PROFILE SETUP MODAL */
+    .color-picker { display: flex; gap: 8px; flex-wrap: wrap; }
+    .color-swatch {
+      width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: border-color 0.15s, transform 0.1s;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.selected { border-color: #fff; }
+
+    /* PROFILE PAGE */
+    .profile-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      align-items: flex-start; justify-content: center;
+      overflow-y: auto; padding: 40px 16px;
+    }
+    .profile-overlay.open { display: flex; }
+    .profile-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); width: min(600px, 100%);
+      display: flex; flex-direction: column; gap: 0;
+      position: relative;
+    }
+    .profile-header {
+      padding: 28px; display: flex; align-items: center; gap: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .profile-info { flex: 1; }
+    .profile-displayname { font-size: 1.3rem; font-weight: 800; }
+    .profile-username { color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+    .profile-bio { font-size: 0.9rem; margin-top: 8px; line-height: 1.5; color: var(--text); }
+    .profile-stats { display: flex; gap: 24px; margin-top: 12px; }
+    .profile-stat { text-align: center; }
+    .profile-stat .num { font-weight: 800; font-size: 1.1rem; }
+    .profile-stat .label { color: var(--muted); font-size: 0.78rem; }
+    .profile-edit-btn {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; padding: 7px 14px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+      align-self: flex-start;
+    }
+    .profile-edit-btn:hover { background: var(--border); }
+    .profile-posts { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .profile-posts h3 { font-size: 0.95rem; font-weight: 700; color: var(--muted); }
+    .profile-close {
+      position: absolute; top: 12px; right: 14px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+    }
+
+    /* POST AUTHOR LINE */
+    .post-author {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px 0;
+    }
+    .post-author .name { font-weight: 700; font-size: 0.88rem; }
+    .post-author .handle { color: var(--muted); font-size: 0.82rem; }
+
     /* TOAST */
     .toast {
       position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -268,8 +343,50 @@
 
 <nav>
   <div class="logo">song<span>board</span></div>
-  <button id="openCompose">+ New Post</button>
+  <div class="nav-right">
+    <button class="new-post-btn" id="openCompose">+ New Post</button>
+    <div class="avatar" id="navAvatar" title="Your profile"></div>
+  </div>
 </nav>
+
+<!-- PROFILE SETUP MODAL -->
+<div class="overlay" id="profileSetupOverlay">
+  <div class="modal">
+    <h2 id="profileSetupTitle">Set up your profile</h2>
+    <input class="tags-input" id="profileDisplayName" type="text" placeholder="Display name" maxlength="30" />
+    <input class="tags-input" id="profileUsername" type="text" placeholder="Username (e.g. musiclover)" maxlength="20" />
+    <textarea id="profileBio" placeholder="Bio — what kind of music are you into?" style="min-height:70px"></textarea>
+    <div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:8px">Pick a colour</div>
+      <div class="color-picker" id="colorPicker"></div>
+    </div>
+    <button class="post-btn" id="saveProfileBtn">Save Profile</button>
+  </div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-panel">
+    <button class="profile-close" id="closeProfile">✕</button>
+    <div class="profile-header">
+      <div class="avatar large" id="profilePageAvatar"></div>
+      <div class="profile-info">
+        <div class="profile-displayname" id="profilePageName"></div>
+        <div class="profile-username" id="profilePageUsername"></div>
+        <div class="profile-bio" id="profilePageBio"></div>
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="num" id="statPosts">0</div><div class="label">posts</div></div>
+          <div class="profile-stat"><div class="num" id="statLikes">0</div><div class="label">likes received</div></div>
+        </div>
+      </div>
+      <button class="profile-edit-btn" id="editProfileBtn">Edit</button>
+    </div>
+    <div class="profile-posts">
+      <h3>YOUR POSTS</h3>
+      <div id="profilePostsList"></div>
+    </div>
+  </div>
+</div>
 
 <!-- COMPOSE MODAL -->
 <div class="overlay" id="overlay">
@@ -312,7 +429,108 @@
   // ─── STATE ───────────────────────────────────────────────────────────────────
   let posts = [];
   try { posts = JSON.parse(localStorage.getItem('sb_posts') || '[]'); } catch(e) { posts = []; }
+  let profile = null;
+  try { profile = JSON.parse(localStorage.getItem('sb_profile') || 'null'); } catch(e) {}
   let selectedSongData = null;
+
+  const AVATAR_COLORS = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#ca8a04','#dc2626','#0891b2'];
+
+  function saveProfile() {
+    try { localStorage.setItem('sb_profile', JSON.stringify(profile)); } catch(e) {}
+  }
+
+  function getInitial(name) {
+    return (name || '?')[0].toUpperCase();
+  }
+
+  function applyAvatar(el, p) {
+    if (!p) { el.style.background = '#444'; el.textContent = '?'; return; }
+    el.style.background = p.color;
+    el.textContent = getInitial(p.displayName);
+  }
+
+  // ─── PROFILE SETUP ──────────────────────────────────────────────────────────
+  const profileSetupOverlay = document.getElementById('profileSetupOverlay');
+  const colorPicker = document.getElementById('colorPicker');
+  let selectedColor = AVATAR_COLORS[0];
+
+  AVATAR_COLORS.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (i === 0 ? ' selected' : '');
+    sw.style.background = c;
+    sw.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      selectedColor = c;
+    };
+    colorPicker.appendChild(sw);
+  });
+
+  function openProfileSetup(editing = false) {
+    document.getElementById('profileSetupTitle').textContent = editing ? 'Edit profile' : 'Set up your profile';
+    if (editing && profile) {
+      document.getElementById('profileDisplayName').value = profile.displayName;
+      document.getElementById('profileUsername').value = profile.username;
+      document.getElementById('profileBio').value = profile.bio || '';
+      selectedColor = profile.color;
+      document.querySelectorAll('.color-swatch').forEach(sw => {
+        sw.classList.toggle('selected', sw.style.background === profile.color);
+      });
+    }
+    profileSetupOverlay.classList.add('open');
+  }
+
+  document.getElementById('saveProfileBtn').onclick = () => {
+    const displayName = document.getElementById('profileDisplayName').value.trim();
+    const username = document.getElementById('profileUsername').value.trim().replace(/\s+/g, '').toLowerCase();
+    const bio = document.getElementById('profileBio').value.trim();
+    if (!displayName || !username) { showToast('Display name and username are required.'); return; }
+    profile = { displayName, username, bio, color: selectedColor };
+    saveProfile();
+    profileSetupOverlay.classList.remove('open');
+    renderNavAvatar();
+    showToast('Profile saved!');
+  };
+
+  // ─── NAV AVATAR ─────────────────────────────────────────────────────────────
+  const navAvatar = document.getElementById('navAvatar');
+
+  function renderNavAvatar() {
+    applyAvatar(navAvatar, profile);
+  }
+
+  navAvatar.onclick = () => {
+    if (!profile) { openProfileSetup(false); return; }
+    openProfilePage();
+  };
+
+  // ─── PROFILE PAGE ────────────────────────────────────────────────────────────
+  const profileOverlay = document.getElementById('profileOverlay');
+  document.getElementById('closeProfile').onclick = () => profileOverlay.classList.remove('open');
+  profileOverlay.onclick = e => { if (e.target === profileOverlay) profileOverlay.classList.remove('open'); };
+  document.getElementById('editProfileBtn').onclick = () => {
+    profileOverlay.classList.remove('open');
+    openProfileSetup(true);
+  };
+
+  function openProfilePage() {
+    applyAvatar(document.getElementById('profilePageAvatar'), profile);
+    document.getElementById('profilePageName').textContent = profile.displayName;
+    document.getElementById('profilePageUsername').textContent = '@' + profile.username;
+    document.getElementById('profilePageBio').textContent = profile.bio || '';
+    const myPosts = posts.filter(p => p.authorUsername === profile.username);
+    const likesReceived = myPosts.reduce((sum, p) => sum + p.likes, 0);
+    document.getElementById('statPosts').textContent = myPosts.length;
+    document.getElementById('statLikes').textContent = likesReceived;
+    const list = document.getElementById('profilePostsList');
+    if (!myPosts.length) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:0.9rem">No posts yet.</div>';
+    } else {
+      list.innerHTML = '';
+      myPosts.forEach(p => list.appendChild(buildPostEl(p)));
+    }
+    profileOverlay.classList.add('open');
+  }
 
   function save() {
     try { localStorage.setItem('sb_posts', JSON.stringify(posts)); } catch(e) {}
@@ -441,6 +659,9 @@
       liked: false,
       comments: [],
       createdAt: Date.now(),
+      authorName: profile ? profile.displayName : 'Anonymous',
+      authorUsername: profile ? profile.username : null,
+      authorColor: profile ? profile.color : '#444',
     };
 
     posts.unshift(post);
@@ -472,6 +693,12 @@
 
     el.innerHTML = `
       <button class="delete-post" title="Delete post">🗑</button>
+
+      <div class="post-author">
+        <div class="avatar small" style="background:${post.authorColor || '#444'}">${getInitial(post.authorName || 'A')}</div>
+        <span class="name">${esc(post.authorName || 'Anonymous')}</span>
+        ${post.authorUsername ? `<span class="handle">@${esc(post.authorUsername)}</span>` : ''}
+      </div>
 
       ${post.song.embedUrl ? `
       <div class="am-embed">
@@ -547,7 +774,12 @@
       const text = commentInput.value.trim();
       if (!text) return;
       const p = posts.find(x => x.id === post.id);
-      p.comments.push({ id: Date.now().toString(), text, createdAt: Date.now() });
+      p.comments.push({
+        id: Date.now().toString(), text, createdAt: Date.now(),
+        authorName: profile ? profile.displayName : 'Anonymous',
+        authorUsername: profile ? profile.username : null,
+        authorColor: profile ? profile.color : '#444',
+      });
       save();
       commentInput.value = '';
       el.querySelector('.comment-count').textContent = p.comments.length;
@@ -567,8 +799,12 @@
       const div = document.createElement('div');
       div.className = 'comment';
       div.innerHTML = `
-        <div class="comment-author">listener</div>
-        <div class="comment-text">${esc(c.text)}</div>
+        <div class="comment-author" style="display:flex;align-items:center;gap:6px">
+          <div class="avatar small" style="background:${c.authorColor||'#444'}">${getInitial(c.authorName||'A')}</div>
+          <span>${esc(c.authorName || 'Anonymous')}</span>
+          ${c.authorUsername ? `<span style="color:var(--muted);font-size:0.78rem">@${esc(c.authorUsername)}</span>` : ''}
+        </div>
+        <div class="comment-text" style="margin-top:4px">${esc(c.text)}</div>
         <button class="delete-comment" title="Delete">✕</button>
       `;
       div.querySelector('.delete-comment').onclick = () => {
@@ -598,6 +834,8 @@
   }
 
   // ─── INIT ────────────────────────────────────────────────────────────────────
+  renderNavAvatar();
+  if (!profile) openProfileSetup(false);
   renderFeed();
 </script>
 </body>
