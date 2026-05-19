@@ -3,14 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https: data:; frame-src https://embed.music.apple.com; connect-src https://itunes.apple.com;">
   <title>Songboard</title>
-  <script>
-    /* Supabase stubs — replaced with real calls once SETUP.md is completed */
-    function submitSafetyReport() { return Promise.reject(new Error('Supabase not configured yet.')); }
-    function logAgeVerification() { return Promise.resolve(); }
-    function requestParentalConsent() { return Promise.reject(new Error('Supabase not configured yet.')); }
-  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -22,24 +15,13 @@
     body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
 
     /* NAV */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(14,14,18,0.92); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px; height: 60px;
-    }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(14,14,18,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 60px; }
     .logo { font-size: 1.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
     .logo span { color: var(--text); }
     .nav-right { display: flex; align-items: center; gap: 10px; }
-    .nav-btn {
-      border: none; border-radius: 8px; padding: 8px 16px;
-      font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.15s;
-    }
+    .nav-btn { border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
     .nav-btn.primary { background: var(--accent2); color: #fff; }
     .nav-btn.primary:hover { background: var(--accent); }
-    .nav-btn.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .nav-btn.secondary:hover { background: var(--border); }
     .nav-btn.room-btn { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
     .nav-btn.room-btn:hover { background: rgba(74,222,128,0.25); }
 
@@ -47,44 +29,22 @@
     .layout { max-width: 680px; margin: 0 auto; padding: 32px 16px; display: flex; flex-direction: column; gap: 24px; }
 
     /* AVATAR */
-    .avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 1rem; flex-shrink: 0; cursor: pointer;
-      border: 2px solid transparent; transition: border-color 0.15s; user-select: none;
-    }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; user-select: none; }
     .avatar:hover { border-color: var(--accent); }
     .avatar.large { width: 72px; height: 72px; font-size: 1.8rem; cursor: default; }
     .avatar.large:hover { border-color: transparent; }
-    .avatar.small { width: 26px; height: 26px; font-size: 0.78rem; cursor: default; flex-shrink: 0; }
+    .avatar.small { width: 26px; height: 26px; font-size: 0.78rem; cursor: default; }
 
-    /* OVERLAYS & MODALS */
-    .overlay {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-    }
+    /* OVERLAYS */
+    .overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
-    .overlay.top-align { align-items: flex-start; overflow-y: auto; padding: 40px 16px; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px;
-      width: min(560px, 95vw); display: flex; flex-direction: column; gap: 16px;
-      position: relative;
-    }
+    .overlay.top { align-items: flex-start; overflow-y: auto; padding: 40px 16px; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: min(560px, 95vw); display: flex; flex-direction: column; gap: 16px; position: relative; }
     .modal h2 { font-size: 1.15rem; font-weight: 700; }
-    .close-btn {
-      position: absolute; top: 12px; right: 16px;
-      background: none; border: none; color: var(--muted);
-      font-size: 1.4rem; cursor: pointer; line-height: 1;
-    }
+    .close-btn { position: absolute; top: 12px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
 
     /* INPUTS */
-    .field {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 10px 14px;
-      font-size: 0.95rem; outline: none; width: 100%; font-family: inherit;
-    }
+    .field { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 10px 14px; font-size: 0.95rem; outline: none; width: 100%; font-family: inherit; }
     .field:focus { border-color: var(--accent); }
     .field::placeholder { color: var(--muted); }
     textarea.field { resize: vertical; min-height: 80px; }
@@ -92,95 +52,61 @@
     /* SEARCH */
     .search-row { display: flex; gap: 8px; align-items: center; }
     .search-row .field { flex: 1; }
-    .search-row .srch-btn {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--accent); border-radius: 8px; padding: 10px 16px;
-      cursor: pointer; font-weight: 600; white-space: nowrap; transition: background 0.15s;
-    }
-    .search-row .srch-btn:hover { background: var(--border); }
-    .search-results {
-      max-height: 220px; overflow-y: auto;
-      border: 1px solid var(--border); border-radius: 8px;
-      display: none; flex-direction: column;
-    }
-    .search-results.visible { display: flex; }
+    .srch-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: background 0.15s; }
+    .srch-btn:hover { background: var(--border); }
+    .search-results { max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; display: none; flex-direction: column; }
+    .search-results.open { display: flex; }
     .result-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; transition: background 0.12s; }
     .result-item:hover { background: var(--surface2); }
     .result-item.selected { background: rgba(167,139,250,0.12); border-left: 3px solid var(--accent); }
     .result-item img { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
-    .result-info .track { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .result-info .artist { color: var(--muted); font-size: 0.8rem; }
     .result-info { overflow: hidden; }
+    .result-info .rtrack { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-info .rartist { color: var(--muted); font-size: 0.8rem; }
 
-    /* SELECTED SONG CHIP */
-    .selected-song {
-      display: none; align-items: center; gap: 12px;
-      background: var(--surface2); border-radius: 10px; padding: 12px;
-      border: 1px solid var(--accent);
-    }
-    .selected-song.visible { display: flex; }
-    .selected-song img { width: 48px; height: 48px; border-radius: 8px; }
-    .selected-song .info { flex: 1; overflow: hidden; }
-    .selected-song .track { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .selected-song .artist { color: var(--muted); font-size: 0.85rem; }
-    .selected-song .clear-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
+    /* SELECTED SONG */
+    .sel-song { display: none; align-items: center; gap: 12px; background: var(--surface2); border-radius: 10px; padding: 12px; border: 1px solid var(--accent); }
+    .sel-song.open { display: flex; }
+    .sel-song img { width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0; }
+    .sel-song .si { flex: 1; overflow: hidden; }
+    .sel-song .si .st { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sel-song .si .sa { color: var(--muted); font-size: 0.85rem; }
+    .sel-song .clr { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
 
-    /* ACTION BUTTON */
-    .action-btn-wide {
-      background: var(--accent2); color: #fff; border: none;
-      border-radius: 8px; padding: 11px; font-size: 0.95rem;
-      font-weight: 700; cursor: pointer; transition: background 0.15s;
-    }
-    .action-btn-wide:hover { background: var(--accent); }
-    .action-btn-wide:disabled { opacity: 0.4; cursor: not-allowed; }
+    /* BUTTONS */
+    .btn-primary { background: var(--accent2); color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; width: 100%; }
+    .btn-primary:hover { background: var(--accent); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* COLOR PICKER */
     .color-picker { display: flex; gap: 8px; flex-wrap: wrap; }
-    .color-swatch {
-      width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
-      border: 3px solid transparent; transition: border-color 0.15s, transform 0.1s;
-    }
-    .color-swatch:hover { transform: scale(1.15); }
-    .color-swatch.selected { border-color: #fff; }
+    .swatch { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: border-color 0.15s, transform 0.1s; }
+    .swatch:hover { transform: scale(1.15); }
+    .swatch.on { border-color: #fff; }
 
     /* FEED */
-    .empty-state { text-align: center; color: var(--muted); padding: 64px 0; font-size: 1rem; line-height: 1.8; }
-    .empty-state strong { color: var(--text); display: block; font-size: 1.2rem; margin-bottom: 8px; }
+    .empty { text-align: center; color: var(--muted); padding: 64px 0; font-size: 1rem; line-height: 1.8; }
+    .empty strong { color: var(--text); display: block; font-size: 1.2rem; margin-bottom: 8px; }
 
-    /* POST CARD */
+    /* POST */
     .post { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; position: relative; }
-
     .post-author { display: flex; align-items: center; gap: 8px; padding: 10px 14px 0; }
-    .post-author .name { font-weight: 700; font-size: 0.88rem; }
-    .post-author .handle { color: var(--muted); font-size: 0.82rem; }
+    .post-author .pname { font-weight: 700; font-size: 0.88rem; }
+    .post-author .phandle { color: var(--muted); font-size: 0.82rem; }
 
     /* REBLOG HEADER */
-    .reblog-header {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px; background: rgba(167,139,250,0.07);
-      border-bottom: 1px solid var(--border);
-      font-size: 0.82rem; color: var(--muted);
-    }
-    .reblog-header .rb-avatar { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; flex-shrink: 0; }
-    .reblog-header strong { color: var(--accent); }
+    .rb-header { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(167,139,250,0.07); border-bottom: 1px solid var(--border); font-size: 0.82rem; color: var(--muted); }
+    .rb-header strong { color: var(--accent); }
+    .rb-mini-av { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; flex-shrink: 0; }
 
     /* ROOM BADGE */
-    .room-badge {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 14px; background: rgba(74,222,128,0.08);
-      border-bottom: 1px solid rgba(74,222,128,0.2);
-      font-size: 0.82rem; color: var(--green); font-weight: 600;
-    }
-    .room-badge .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
-    .join-room-btn {
-      margin-left: auto; background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4);
-      color: var(--green); border-radius: 6px; padding: 4px 12px;
-      font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.15s;
-    }
-    .join-room-btn:hover { background: rgba(74,222,128,0.3); }
+    .room-badge { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: rgba(74,222,128,0.08); border-bottom: 1px solid rgba(74,222,128,0.2); font-size: 0.82rem; color: var(--green); font-weight: 600; }
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+    .join-btn { margin-left: auto; background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+    .join-btn:hover { background: rgba(74,222,128,0.3); }
 
-    /* APPLE MUSIC EMBED */
+    /* EMBED */
     .am-embed { padding: 14px 14px 0; background: var(--surface2); border-bottom: 1px solid var(--border); }
     .am-embed iframe { width: 100%; border-radius: 10px; display: block; border: none; }
 
@@ -193,145 +119,103 @@
     /* POST FOOTER */
     .post-footer { display: flex; align-items: center; gap: 4px; padding: 8px 16px; border-top: 1px solid var(--border); }
     .post-time { color: var(--muted); font-size: 0.78rem; margin-right: auto; }
-    .act {
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: 0.82rem; padding: 5px 9px;
-      border-radius: 6px; display: flex; align-items: center; gap: 4px;
-      transition: color 0.15s, background 0.15s;
-    }
+    .act { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; padding: 5px 9px; border-radius: 6px; display: flex; align-items: center; gap: 4px; transition: color 0.15s, background 0.15s; }
     .act:hover { color: var(--text); background: var(--surface2); }
     .act.liked { color: var(--danger); }
-    .act.reposted { color: var(--accent); }
 
     /* DELETE */
-    .delete-post {
-      position: absolute; top: 8px; right: 10px;
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: 0.9rem; opacity: 0; transition: opacity 0.15s; z-index: 2;
-    }
-    .post:hover .delete-post { opacity: 1; }
+    .del-post { position: absolute; top: 8px; right: 10px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; opacity: 0; transition: opacity 0.15s; z-index: 2; }
+    .post:hover .del-post { opacity: 1; }
 
     /* COMMENTS */
-    .comments-section { border-top: 1px solid var(--border); display: none; }
-    .comments-section.open { display: block; }
-    .comment-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
-    .comment { background: var(--surface2); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; line-height: 1.5; position: relative; }
-    .comment-author { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-    .comment-author .cname { font-weight: 700; font-size: 0.82rem; }
-    .comment-author .chandle { color: var(--muted); font-size: 0.78rem; }
-    .comment-text { white-space: pre-wrap; word-break: break-word; }
-    .del-comment { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; opacity: 0; transition: opacity 0.15s; }
-    .comment:hover .del-comment { opacity: 1; }
-    .comment-form { padding: 0 16px 12px; display: flex; gap: 8px; }
-    .comment-form input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-size: 0.88rem; outline: none; }
-    .comment-form input:focus { border-color: var(--accent); }
-    .comment-form button { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-    .comment-form button:hover { background: var(--border); }
+    .comments { border-top: 1px solid var(--border); display: none; }
+    .comments.open { display: block; }
+    .cmt-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .cmt { background: var(--surface2); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; position: relative; }
+    .cmt-author { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .cmt-author .cn { font-weight: 700; font-size: 0.82rem; }
+    .cmt-author .ch { color: var(--muted); font-size: 0.78rem; }
+    .cmt-text { white-space: pre-wrap; word-break: break-word; line-height: 1.5; }
+    .del-cmt { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; opacity: 0; }
+    .cmt:hover .del-cmt { opacity: 1; }
+    .cmt-form { padding: 0 16px 12px; display: flex; gap: 8px; }
+    .cmt-form input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-size: 0.88rem; outline: none; }
+    .cmt-form input:focus { border-color: var(--accent); }
+    .cmt-form button { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
 
     /* PROFILE PAGE */
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: min(600px, 100%); display: flex; flex-direction: column; position: relative; }
-    .profile-header { padding: 28px; display: flex; align-items: flex-start; gap: 18px; border-bottom: 1px solid var(--border); }
-    .profile-info .pname { font-size: 1.3rem; font-weight: 800; }
-    .profile-info .pusername { color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
-    .profile-info .pbio { font-size: 0.9rem; margin-top: 8px; line-height: 1.5; }
-    .profile-stats { display: flex; gap: 24px; margin-top: 12px; }
-    .profile-stat .num { font-weight: 800; font-size: 1.1rem; }
-    .profile-stat .lbl { color: var(--muted); font-size: 0.78rem; }
-    .edit-profile-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; align-self: flex-start; margin-left: auto; }
-    .edit-profile-btn:hover { background: var(--border); }
-    .profile-posts { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-    .profile-posts h3 { font-size: 0.88rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; }
+    .prof-header { padding: 28px; display: flex; align-items: flex-start; gap: 18px; border-bottom: 1px solid var(--border); }
+    .prof-info .pdn { font-size: 1.3rem; font-weight: 800; }
+    .prof-info .pun { color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+    .prof-info .pbi { font-size: 0.9rem; margin-top: 8px; line-height: 1.5; }
+    .prof-stats { display: flex; gap: 24px; margin-top: 12px; }
+    .prof-stat .num { font-weight: 800; font-size: 1.1rem; }
+    .prof-stat .lbl { color: var(--muted); font-size: 0.78rem; }
+    .edit-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; margin-left: auto; align-self: flex-start; }
+    .edit-btn:hover { background: var(--border); }
+    .prof-posts { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .prof-posts h3 { font-size: 0.88rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; }
 
-    /* LISTENING ROOM */
+    /* ROOM */
     .room-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: var(--bg); flex-direction: column; }
     .room-overlay.open { display: flex; }
-    .room-nav { display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 56px; border-bottom: 1px solid var(--border); background: rgba(14,14,18,0.95); flex-shrink: 0; }
-    .room-nav .room-title { font-weight: 700; font-size: 1rem; flex: 1; }
-    .room-nav .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
-    .room-nav .leave-btn { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: var(--danger); border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
-    .room-nav .leave-btn:hover { background: rgba(248,113,113,0.25); }
+    .room-nav { display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 56px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .room-title { font-weight: 700; font-size: 1rem; flex: 1; }
+    .leave-btn { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: var(--danger); border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
     .room-body { display: flex; flex: 1; overflow: hidden; }
     .room-player { flex: 1; display: flex; flex-direction: column; padding: 24px; gap: 16px; overflow-y: auto; border-right: 1px solid var(--border); }
     .room-player iframe { width: 100%; border-radius: 12px; border: none; }
-    .room-chat { width: 320px; display: flex; flex-direction: column; flex-shrink: 0; }
-    .room-chat-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; }
-    .room-messages { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+    .room-chat { width: 300px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .chat-head { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; }
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
     .room-msg { font-size: 0.88rem; line-height: 1.5; display: flex; gap: 8px; align-items: flex-start; }
-    .room-msg .msg-avatar { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
-    .room-msg .msg-body .msg-name { font-weight: 700; font-size: 0.8rem; color: var(--accent); }
-    .room-msg .msg-body .msg-text { white-space: pre-wrap; word-break: break-word; }
-    .room-msg.system { color: var(--muted); font-style: italic; font-size: 0.82rem; padding: 0 4px; }
-    .room-input-row { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-    .room-input-row input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 0.88rem; outline: none; }
-    .room-input-row input:focus { border-color: var(--green); }
-    .room-input-row button { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 8px; padding: 9px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
-    .room-input-row button:hover { background: rgba(74,222,128,0.3); }
-
-    /* REBLOG QUOTE */
-    .reblog-quote { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 0.88rem; color: var(--muted); }
-    .reblog-quote .q-track { font-weight: 700; color: var(--text); }
-
-    /* SPINNER */
-    .spinner { display: none; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
-    .spinner.visible { display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* TOAST */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; transition: transform 0.3s; z-index: 9999; pointer-events: none; }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
+    .msg-av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+    .msg-name { font-weight: 700; font-size: 0.8rem; color: var(--accent); }
+    .msg-text { white-space: pre-wrap; word-break: break-word; }
+    .room-msg.sys { color: var(--muted); font-style: italic; font-size: 0.82rem; }
+    .chat-input { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .chat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 0.88rem; outline: none; }
+    .chat-input input:focus { border-color: var(--green); }
+    .chat-input button { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 8px; padding: 9px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
     @media (max-width: 600px) { .room-chat { display: none; } }
 
     /* AGE GATE */
-    .age-screen {
-      display: none; position: fixed; inset: 0; z-index: 9000;
-      background: var(--bg); flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 24px; text-align: center;
-    }
-    .age-screen.show { display: flex; }
-    .age-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 40px 36px;
-      width: min(420px, 100%); display: flex; flex-direction: column;
-      gap: 20px; align-items: center;
-    }
+    .age-screen { display: none; position: fixed; inset: 0; z-index: 9000; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+    .age-screen.open { display: flex; }
+    .age-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 36px; width: min(420px, 100%); display: flex; flex-direction: column; gap: 20px; align-items: center; }
     .age-logo { font-size: 1.8rem; font-weight: 900; color: var(--accent); }
     .age-logo span { color: var(--text); }
-    .age-box h2 { font-size: 1.15rem; font-weight: 700; line-height: 1.4; }
-    .age-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
-    .age-year-row { display: flex; gap: 10px; width: 100%; }
-    .age-year-row input {
-      flex: 1; background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 12px 14px;
-      font-size: 1.1rem; text-align: center; outline: none; letter-spacing: 2px;
-    }
-    .age-year-row input:focus { border-color: var(--accent); }
-    .age-confirm-btn {
-      width: 100%; background: var(--accent2); color: #fff; border: none;
-      border-radius: 10px; padding: 13px; font-size: 1rem; font-weight: 700;
-      cursor: pointer; transition: background 0.15s;
-    }
-    .age-confirm-btn:hover { background: var(--accent); }
-    .age-fine-print { font-size: 0.75rem; color: var(--muted); }
+    .age-box h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
+    .age-box p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+    .age-box input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 12px 14px; font-size: 1.1rem; text-align: center; outline: none; width: 100%; letter-spacing: 2px; }
+    .age-box input:focus { border-color: var(--accent); }
+    .age-fine { font-size: 0.75rem; color: var(--muted); line-height: 1.6; }
+    .age-fine a { color: var(--accent); }
 
-    /* BLOCKED SCREEN */
-    .blocked-screen {
-      display: none; position: fixed; inset: 0; z-index: 9000;
-      background: var(--bg); flex-direction: column;
-      align-items: center; justify-content: center; padding: 24px; text-align: center;
-    }
-    .blocked-screen.show { display: flex; }
-    .blocked-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 40px 36px; width: min(420px, 100%);
-      display: flex; flex-direction: column; gap: 16px; align-items: center;
-    }
-    .blocked-icon { font-size: 3rem; }
+    /* BLOCKED */
+    .blocked-screen { display: none; position: fixed; inset: 0; z-index: 9000; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+    .blocked-screen.open { display: flex; }
+    .blocked-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 36px; width: min(420px, 100%); display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .blocked-box .icon { font-size: 3rem; }
     .blocked-box h2 { font-size: 1.2rem; font-weight: 800; }
     .blocked-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* REBLOG QUOTE */
+    .rb-quote { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 0.88rem; color: var(--muted); }
+    .rb-quote .qt { font-weight: 700; color: var(--text); }
+
+    /* MISC */
+    .spinner { display: none; width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner.on { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 20px; font-size: 0.9rem; transition: transform 0.3s; z-index: 9999; pointer-events: none; white-space: nowrap; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    footer { border-top: 1px solid var(--border); padding: 28px 24px; text-align: center; color: var(--muted); font-size: 0.82rem; margin-top: 32px; }
+    footer a { color: var(--muted); text-decoration: none; margin: 0 10px; }
+    footer a:hover { color: var(--text); }
+    footer a.danger { color: var(--danger); font-weight: 600; }
   </style>
 </head>
 <body>
@@ -340,29 +224,24 @@
 <div class="age-screen" id="ageScreen">
   <div class="age-box">
     <div class="age-logo">song<span>board</span></div>
-    <h2>Before you continue,<br>what year were you born?</h2>
-    <p>Songboard is only for people aged 18 and older. We ask to keep everyone safe.</p>
-    <div class="age-year-row">
-      <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" maxlength="4" />
-    </div>
-    <button class="age-confirm-btn" id="ageConfirmBtn">Continue</button>
-    <div class="age-fine-print">
-      Your birth year is used only to verify your age and is never saved or shared.<br>
-      Songboard is only available to users aged 18 and older.<br>
-      By continuing you agree to our <a href="terms.html" style="color:var(--accent)">Terms of Service</a> and <a href="privacy.html" style="color:var(--accent)">Privacy Policy</a>.
-    </div>
+    <h2>What year were you born?</h2>
+    <p>Songboard is for people aged 18 and older.</p>
+    <input type="number" id="birthYear" placeholder="YYYY" min="1900" max="2099" />
+    <button class="btn-primary" id="ageBtn">Continue</button>
+    <div class="age-fine">Your birth year is never saved or shared.<br>By continuing you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</div>
   </div>
 </div>
 
-<!-- BLOCKED SCREEN -->
+<!-- BLOCKED -->
 <div class="blocked-screen" id="blockedScreen">
   <div class="blocked-box">
-    <div class="blocked-icon">🔒</div>
+    <div class="icon">🔒</div>
     <h2>Sorry, Songboard isn't for you yet</h2>
-    <p>Songboard is only available to people aged 18 and older.<br><br>We made this decision to keep younger users safe online. Come back when you're older — the music will still be here.</p>
+    <p>Songboard is only available to people aged 18 and older. Come back when you're older — the music will still be here.</p>
   </div>
 </div>
 
+<!-- NAV -->
 <nav>
   <div class="logo">song<span>board</span></div>
   <div class="nav-right">
@@ -372,7 +251,7 @@
   </div>
 </nav>
 
-<!-- COMPOSE POST MODAL -->
+<!-- COMPOSE POST -->
 <div class="overlay" id="composeOverlay">
   <div class="modal">
     <button class="close-btn" id="closeCompose">✕</button>
@@ -383,18 +262,18 @@
       <div class="spinner" id="searchSpinner"></div>
     </div>
     <div class="search-results" id="searchResults"></div>
-    <div class="selected-song" id="selectedSong">
-      <img id="selectedArt" src="" alt="" />
-      <div class="info"><div class="track" id="selectedTrack"></div><div class="artist" id="selectedArtist"></div></div>
-      <button class="clear-btn" id="clearSong">✕</button>
+    <div class="sel-song" id="selSong">
+      <img id="selArt" src="" alt="" />
+      <div class="si"><div class="st" id="selTrack"></div><div class="sa" id="selArtist"></div></div>
+      <button class="clr" id="clearSong">✕</button>
     </div>
     <textarea class="field" id="captionInput" placeholder="What do you think about this song?…" maxlength="500"></textarea>
-    <input class="field" id="tagsInput" type="text" placeholder="Tags (comma separated, e.g. indie, 90s)" maxlength="100" />
-    <button class="action-btn-wide" id="postBtn" disabled>Post</button>
+    <input class="field" id="tagsInput" type="text" placeholder="Tags, comma separated (e.g. indie, 90s)" maxlength="100" />
+    <button class="btn-primary" id="postBtn" disabled>Post</button>
   </div>
 </div>
 
-<!-- PROFILE SETUP MODAL -->
+<!-- PROFILE SETUP -->
 <div class="overlay" id="profileSetupOverlay">
   <div class="modal">
     <h2 id="profileSetupTitle">Set up your profile</h2>
@@ -405,96 +284,70 @@
       <div style="font-size:0.85rem;color:var(--muted);margin-bottom:8px">Pick a colour</div>
       <div class="color-picker" id="colorPicker"></div>
     </div>
-    <button class="action-btn-wide" id="saveProfileBtn">Save Profile</button>
+    <button class="btn-primary" id="saveProfileBtn">Save Profile</button>
   </div>
 </div>
 
 <!-- PROFILE PAGE -->
-<div class="overlay top-align" id="profileOverlay">
+<div class="overlay top" id="profileOverlay">
   <div class="panel">
     <button class="close-btn" id="closeProfile">✕</button>
-    <div class="profile-header">
-      <div class="avatar large" id="profilePageAvatar"></div>
-      <div class="profile-info">
-        <div class="pname" id="profilePageName"></div>
-        <div class="pusername" id="profilePageUsername"></div>
-        <div class="pbio" id="profilePageBio"></div>
-        <div class="profile-stats">
-          <div class="profile-stat"><div class="num" id="statPosts">0</div><div class="lbl">posts</div></div>
-          <div class="profile-stat"><div class="num" id="statLikes">0</div><div class="lbl">likes received</div></div>
-          <div class="profile-stat"><div class="num" id="statReblogs">0</div><div class="lbl">reblogs</div></div>
+    <div class="prof-header">
+      <div class="avatar large" id="profAvatar"></div>
+      <div class="prof-info">
+        <div class="pdn" id="profName"></div>
+        <div class="pun" id="profUsername"></div>
+        <div class="pbi" id="profBio"></div>
+        <div class="prof-stats">
+          <div class="prof-stat"><div class="num" id="statPosts">0</div><div class="lbl">posts</div></div>
+          <div class="prof-stat"><div class="num" id="statLikes">0</div><div class="lbl">likes</div></div>
+          <div class="prof-stat"><div class="num" id="statReblogs">0</div><div class="lbl">reblogs</div></div>
         </div>
       </div>
-      <button class="edit-profile-btn" id="editProfileBtn">Edit</button>
+      <button class="edit-btn" id="editProfileBtn">Edit</button>
     </div>
-    <div class="profile-posts">
-      <h3>YOUR POSTS</h3>
-      <div id="profilePostsList"></div>
-    </div>
+    <div class="prof-posts"><h3>YOUR POSTS</h3><div id="profPostsList"></div></div>
   </div>
 </div>
 
-<!-- REBLOG MODAL -->
+<!-- REBLOG -->
 <div class="overlay" id="reblogOverlay">
   <div class="modal">
     <button class="close-btn" id="closeReblog">✕</button>
     <h2>Reblog</h2>
-    <div class="reblog-quote" id="reblogQuote"></div>
-    <textarea class="field" id="reblogComment" placeholder="Add your thoughts… (optional)" maxlength="300"></textarea>
-    <button class="action-btn-wide" id="doReblogBtn">Reblog</button>
+    <div class="rb-quote" id="rbQuote"></div>
+    <textarea class="field" id="rbComment" placeholder="Add your thoughts… (optional)" maxlength="300"></textarea>
+    <button class="btn-primary" id="doReblogBtn">Reblog</button>
   </div>
 </div>
 
-<!-- CREATE ROOM MODAL -->
+<!-- CREATE ROOM -->
 <div class="overlay" id="roomSetupOverlay">
   <div class="modal">
     <button class="close-btn" id="closeRoomSetup">✕</button>
     <h2>Start a Listening Room</h2>
     <input class="field" id="roomName" type="text" placeholder="Room name (e.g. Late Night Vibes)" maxlength="40" />
     <div class="search-row">
-      <input class="field" id="roomSearchInput" type="text" placeholder="Search for a song to play…" maxlength="100" autocomplete="off" />
+      <input class="field" id="roomSearch" type="text" placeholder="Search for a song to play…" maxlength="100" autocomplete="off" />
       <button class="srch-btn" id="roomSearchBtn">Search</button>
       <div class="spinner" id="roomSpinner"></div>
     </div>
-    <div class="search-results" id="roomSearchResults"></div>
-    <div class="selected-song" id="roomSelectedSong">
-      <img id="roomSelectedArt" src="" alt="" />
-      <div class="info"><div class="track" id="roomSelectedTrack"></div><div class="artist" id="roomSelectedArtist"></div></div>
-      <button class="clear-btn" id="clearRoomSong">✕</button>
+    <div class="search-results" id="roomResults"></div>
+    <div class="sel-song" id="roomSelSong">
+      <img id="roomSelArt" src="" alt="" />
+      <div class="si"><div class="st" id="roomSelTrack"></div><div class="sa" id="roomSelArtist"></div></div>
+      <button class="clr" id="clearRoomSong">✕</button>
     </div>
-    <button class="action-btn-wide" id="startRoomBtn" disabled>Start Room</button>
+    <button class="btn-primary" id="startRoomBtn" disabled>Start Room</button>
   </div>
 </div>
 
-<!-- LISTENING ROOM -->
-<div class="room-overlay" id="roomOverlay">
-  <div class="room-nav">
-    <div class="live-dot"></div>
-    <div class="room-title" id="roomTitle">Listening Room</div>
-    <button class="leave-btn" id="leaveRoomBtn">Leave</button>
-  </div>
-  <div class="room-body">
-    <div class="room-player">
-      <div id="roomEmbed"></div>
-      <div style="font-size:0.9rem;color:var(--muted);line-height:1.6" id="roomInfo"></div>
-    </div>
-    <div class="room-chat">
-      <div class="room-chat-header">💬 Chat</div>
-      <div class="room-messages" id="roomMessages"></div>
-      <div class="room-input-row">
-        <input type="text" id="roomChatInput" placeholder="Say something…" maxlength="200" />
-        <button id="roomSendBtn">Send</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SAFETY REPORT MODAL -->
+<!-- SAFETY REPORT -->
 <div class="overlay" id="safetyOverlay">
   <div class="modal">
     <button class="close-btn" id="closeSafety">✕</button>
     <h2>🚨 Report a Safety Issue</h2>
-    <p style="color:var(--muted);font-size:0.88rem">Reports go directly to our safety team. For emergencies involving a child, also contact <a href="https://www.cybertipline.org" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">NCMEC</a> or call 911.</p>
+    <p style="color:var(--muted);font-size:0.88rem">For child safety emergencies also contact <a href="https://www.cybertipline.org" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">NCMEC</a> or call 911.</p>
     <select class="field" id="reportType">
       <option value="">— Select issue type —</option>
       <option value="child_safety">Child safety concern</option>
@@ -504,601 +357,460 @@
       <option value="spam">Spam</option>
       <option value="other">Other</option>
     </select>
-    <textarea class="field" id="reportDescription" placeholder="Describe what you saw in as much detail as possible…" maxlength="2000" style="min-height:120px"></textarea>
-    <button class="action-btn-wide" id="submitReportBtn">Submit Report</button>
-    <p style="font-size:0.78rem;color:var(--muted);text-align:center">Your report is anonymous unless you are signed in.</p>
+    <textarea class="field" id="reportDesc" placeholder="Describe what you saw…" maxlength="2000" style="min-height:120px"></textarea>
+    <button class="btn-primary" id="submitReportBtn">Submit Report</button>
+  </div>
+</div>
+
+<!-- LISTENING ROOM -->
+<div class="room-overlay" id="roomOverlay">
+  <div class="room-nav">
+    <div class="pulse"></div>
+    <div class="room-title" id="roomTitle">Listening Room</div>
+    <button class="leave-btn" id="leaveRoomBtn">Leave</button>
+  </div>
+  <div class="room-body">
+    <div class="room-player"><div id="roomEmbed"></div></div>
+    <div class="room-chat">
+      <div class="chat-head">💬 Chat</div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Say something…" maxlength="200" />
+        <button id="chatSendBtn">Send</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- FEED -->
 <div class="layout"><div id="feed"></div></div>
 
-<footer style="border-top:1px solid var(--border);padding:28px 24px;text-align:center;color:var(--muted);font-size:0.82rem;margin-top:32px">
-  <div style="margin-bottom:10px">
-    <a href="privacy.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Privacy Policy</a>
-    <a href="terms.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Terms of Service</a>
-    <a href="safety.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Safety</a>
-    <a href="#" data-open-safety style="color:var(--danger);text-decoration:none;margin:0 10px;font-weight:600">🚨 Report a Safety Issue</a>
+<footer>
+  <div style="margin-bottom:8px">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="safety.html">Safety</a>
+    <a href="#" class="danger" id="openSafetyReport">🚨 Report a Safety Issue</a>
   </div>
-  <div>© 2026 Songboard &nbsp;·&nbsp; For users aged 18 and older &nbsp;·&nbsp; <a href="safety.html" style="color:var(--muted);text-decoration:none">Child safety resources</a></div>
+  <div>© 2026 Songboard · For users aged 18 and older</div>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // ─── AGE GATE (runs before everything) ───────────────────────────────────────
-  (function() {
-    const status = localStorage.getItem('sb_age');
-    if (status === 'blocked') {
-      document.getElementById('blockedScreen').classList.add('show');
-      return;
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function timeAgo(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return 'just now';
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function initial(n) { return String(n||'?')[0].toUpperCase(); }
+function mkAvEl(name, color, cls='') {
+  return `<div class="avatar ${cls}" style="background:${esc(color||'#444')}">${esc(initial(name))}</div>`;
+}
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2300);
+}
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function load(k, fb) { try { return JSON.parse(localStorage.getItem(k) ?? 'null') ?? fb; } catch(e){ return fb; } }
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+const COLORS = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#ca8a04','#dc2626','#0891b2'];
+let posts    = load('sb_posts', []);
+let profile  = load('sb_profile', null);
+let selSong  = null, roomSong = null, reblogPost = null, activeRoom = null, roomCh = null;
+
+function authorInfo() {
+  return { authorName: profile?.displayName||'Anonymous', authorUsername: profile?.username||null, authorColor: profile?.color||'#444' };
+}
+
+// ── AGE GATE ─────────────────────────────────────────────────────────────────
+(function() {
+  const status = load('sb_age', null);
+  if (status === 'blocked') { document.getElementById('blockedScreen').classList.add('open'); return; }
+  if (status === 'verified') return;
+  document.getElementById('ageScreen').classList.add('open');
+  document.getElementById('ageBtn').onclick = function() {
+    const yr = parseInt(document.getElementById('birthYear').value, 10);
+    const now = new Date().getFullYear();
+    const inp = document.getElementById('birthYear');
+    if (!yr || yr < 1900 || yr > now) { inp.style.borderColor='var(--danger)'; return; }
+    inp.style.borderColor='';
+    if (now - yr < 18) {
+      store('sb_age','blocked');
+      document.getElementById('ageScreen').classList.remove('open');
+      document.getElementById('blockedScreen').classList.add('open');
+    } else {
+      store('sb_age','verified');
+      document.getElementById('ageScreen').classList.remove('open');
     }
-    if (status === 'verified') return;
+  };
+  document.getElementById('birthYear').onkeydown = e => { if(e.key==='Enter') document.getElementById('ageBtn').click(); };
+})();
 
-    // Not yet checked — show age gate
-    document.getElementById('ageScreen').classList.add('show');
-
-    document.getElementById('ageConfirmBtn').onclick = function() {
-      const yearVal = parseInt(document.getElementById('birthYear').value, 10);
-      const currentYear = new Date().getFullYear();
-      if (!yearVal || yearVal < 1900 || yearVal > currentYear) {
-        document.getElementById('birthYear').style.borderColor = 'var(--danger)';
-        return;
-      }
-      const age = currentYear - yearVal;
-      if (age < 18) {
-        try { localStorage.setItem('sb_age', 'blocked'); } catch(e) {}
-        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'blocked', ageBracket: age < 13 ? 'under_13' : '13_to_17' });
-        document.getElementById('ageScreen').classList.remove('show');
-        document.getElementById('blockedScreen').classList.add('show');
-      } else {
-        try { localStorage.setItem('sb_age', 'verified'); } catch(e) {}
-        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'verified', ageBracket: '18_plus' });
-        document.getElementById('ageScreen').classList.remove('show');
-      }
-    };
-
-    document.getElementById('birthYear').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') document.getElementById('ageConfirmBtn').click();
-    });
-  })();
-
-  // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-  const AVATAR_COLORS = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#ca8a04','#dc2626','#0891b2'];
-  const EMBED_ORIGIN = 'embed.music.apple.com';
-  const ITUNES_API  = 'https://itunes.apple.com/search';
-
-  // ─── STATE ───────────────────────────────────────────────────────────────────
-  let posts = [];
-  let profile = null;
-  let selectedSongData = null;
-  let reblogTarget = null;
-  let roomSongData = null;
-  let activeRoom = null;
-  let roomChannel = null;
-
-  try { posts   = JSON.parse(localStorage.getItem('sb_posts')   || '[]');  } catch(e) { posts = []; }
-  try { profile = JSON.parse(localStorage.getItem('sb_profile') || 'null'); } catch(e) {}
-
-  function savePosts()   { try { localStorage.setItem('sb_posts',   JSON.stringify(posts));   } catch(e) {} }
-  function saveProfile() { try { localStorage.setItem('sb_profile', JSON.stringify(profile)); } catch(e) {} }
-
-  // ─── HELPERS ─────────────────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s ?? '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
-  function safeEmbedUrl(trackViewUrl) {
-    try {
-      const u = new URL(trackViewUrl);
-      if (u.hostname !== 'music.apple.com') return null;
-      u.hostname = EMBED_ORIGIN;
-      u.pathname = u.pathname.replace(/\/album\/[^/]+\/(\d+)/, '/album/$1');
-      return u.toString();
-    } catch { return null; }
-  }
-
-  function timeAgo(ts) {
-    const s = Math.floor((Date.now() - ts) / 1000);
-    if (s < 60) return 'just now';
-    if (s < 3600) return Math.floor(s/60) + 'm ago';
-    if (s < 86400) return Math.floor(s/3600) + 'h ago';
-    return Math.floor(s/86400) + 'd ago';
-  }
-
-  function getInitial(name) { return (String(name||'?'))[0].toUpperCase(); }
-
-  function applyAvatar(el, p) {
-    el.style.background = p ? p.color : '#444';
-    el.textContent = p ? getInitial(p.displayName) : '?';
-  }
-
-  function makeAvatarEl(name, color, extraClass='') {
-    return `<div class="avatar ${extraClass}" style="background:${esc(color||'#444')}">${esc(getInitial(name))}</div>`;
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2300);
-  }
-
-  function authorInfo() {
-    return {
-      authorName:     profile ? profile.displayName : 'Anonymous',
-      authorUsername: profile ? profile.username    : null,
-      authorColor:    profile ? profile.color       : '#444',
-    };
-  }
-
-  // ─── ITUNES SEARCH ────────────────────────────────────────────────────────────
-  async function doSearch(inputEl, resultsEl, spinnerEl, onSelect) {
-    const q = inputEl.value.trim();
-    if (!q) return;
-    spinnerEl.classList.add('visible');
-    resultsEl.innerHTML = '';
-    resultsEl.classList.remove('visible');
-    try {
-      const r = await fetch(`${ITUNES_API}?term=${encodeURIComponent(q)}&media=music&limit=8`);
-      const d = await r.json();
-      spinnerEl.classList.remove('visible');
-      if (!d.results.length) {
-        resultsEl.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:0.88rem">No results.</div>';
-      } else {
-        d.results.forEach(track => {
-          const item = document.createElement('div');
-          item.className = 'result-item';
-          item.innerHTML = `<img src="${esc(track.artworkUrl60)}" alt="" loading="lazy"><div class="result-info"><div class="track">${esc(track.trackName)}</div><div class="artist">${esc(track.artistName)} · ${esc(track.collectionName||'')}</div></div>`;
-          item.onclick = () => {
-            resultsEl.querySelectorAll('.result-item').forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
-            onSelect({
-              name: track.trackName, artist: track.artistName,
-              album: track.collectionName || '',
-              art: track.artworkUrl100,
-              embedUrl: safeEmbedUrl(track.trackViewUrl),
-            });
-          };
-          resultsEl.appendChild(item);
-        });
-      }
-      resultsEl.classList.add('visible');
-    } catch {
-      spinnerEl.classList.remove('visible');
-      resultsEl.innerHTML = '<div style="padding:12px;color:var(--danger);font-size:0.88rem">Search failed. Check your connection.</div>';
-      resultsEl.classList.add('visible');
+// ── ITUNES SEARCH ────────────────────────────────────────────────────────────
+async function searchSongs(q, resultsEl, spinnerEl, onPick) {
+  if (!q.trim()) return;
+  spinnerEl.classList.add('on');
+  resultsEl.innerHTML = '';
+  resultsEl.classList.remove('open');
+  try {
+    const r = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=8`);
+    const d = await r.json();
+    spinnerEl.classList.remove('on');
+    if (!d.results.length) {
+      resultsEl.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:0.88rem">No results.</div>';
+    } else {
+      d.results.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `<img src="${esc(t.artworkUrl60)}" alt="" loading="lazy"><div class="result-info"><div class="rtrack">${esc(t.trackName)}</div><div class="rartist">${esc(t.artistName)} · ${esc(t.collectionName||'')}</div></div>`;
+        item.onclick = () => {
+          resultsEl.querySelectorAll('.result-item').forEach(i=>i.classList.remove('selected'));
+          item.classList.add('selected');
+          let embedUrl = null;
+          try {
+            const u = new URL(t.trackViewUrl);
+            u.hostname = 'embed.music.apple.com';
+            u.pathname = u.pathname.replace(/\/album\/[^/]+\/(\d+)/,'/album/$1');
+            embedUrl = u.toString();
+          } catch(e){}
+          onPick({ name:t.trackName, artist:t.artistName, album:t.collectionName||'', art:t.artworkUrl100, embedUrl });
+        };
+        resultsEl.appendChild(item);
+      });
     }
+    resultsEl.classList.add('open');
+  } catch(e) {
+    spinnerEl.classList.remove('on');
+    resultsEl.innerHTML = '<div style="padding:12px;color:var(--danger);font-size:0.88rem">Search failed. Check your connection.</div>';
+    resultsEl.classList.add('open');
   }
+}
 
-  function bindSearch(inputId, btnId, resultsId, spinnerId, selectedId, artId, trackId, artistId, clearId, onSelect) {
-    const input   = document.getElementById(inputId);
-    const results = document.getElementById(resultsId);
-    const spinner = document.getElementById(spinnerId);
-    const selBox  = document.getElementById(selectedId);
-    document.getElementById(btnId).onclick = () => doSearch(input, results, spinner, song => {
-      document.getElementById(artId).src   = esc(song.art);
-      document.getElementById(trackId).textContent  = song.name;
-      document.getElementById(artistId).textContent = song.artist;
-      selBox.classList.add('visible');
-      onSelect(song);
-    });
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById(btnId).click(); });
-    document.getElementById(clearId).onclick = () => {
-      selBox.classList.remove('visible');
-      results.innerHTML = ''; results.classList.remove('visible');
-      input.value = ''; onSelect(null);
+// ── COMPOSE ──────────────────────────────────────────────────────────────────
+const composeOverlay = document.getElementById('composeOverlay');
+document.getElementById('openCompose').onclick  = () => composeOverlay.classList.add('open');
+document.getElementById('closeCompose').onclick = closeCompose;
+composeOverlay.onclick = e => { if(e.target===composeOverlay) closeCompose(); };
+
+document.getElementById('searchBtn').onclick = () => searchSongs(document.getElementById('searchInput').value, document.getElementById('searchResults'), document.getElementById('searchSpinner'), song => {
+  selSong = song;
+  document.getElementById('selArt').src = song.art;
+  document.getElementById('selTrack').textContent = song.name;
+  document.getElementById('selArtist').textContent = song.artist;
+  document.getElementById('selSong').classList.add('open');
+  document.getElementById('postBtn').disabled = false;
+});
+document.getElementById('searchInput').onkeydown = e => { if(e.key==='Enter') document.getElementById('searchBtn').click(); };
+document.getElementById('clearSong').onclick = () => {
+  selSong = null;
+  document.getElementById('selSong').classList.remove('open');
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchResults').classList.remove('open');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('postBtn').disabled = true;
+};
+
+function closeCompose() {
+  composeOverlay.classList.remove('open');
+  selSong = null;
+  ['searchInput','captionInput','tagsInput'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('searchResults').innerHTML='';
+  document.getElementById('searchResults').classList.remove('open');
+  document.getElementById('selSong').classList.remove('open');
+  document.getElementById('postBtn').disabled = true;
+}
+
+document.getElementById('postBtn').onclick = () => {
+  if (!selSong) return;
+  const caption = document.getElementById('captionInput').value.trim();
+  const tags = document.getElementById('tagsInput').value.split(',').map(t=>t.trim()).filter(Boolean);
+  posts.unshift({ id:Date.now().toString(), type:'post', song:{...selSong}, caption, tags, likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
+  store('sb_posts', posts); renderFeed(); closeCompose(); toast('Posted!');
+};
+
+// ── REBLOG ───────────────────────────────────────────────────────────────────
+const reblogOverlay = document.getElementById('reblogOverlay');
+document.getElementById('closeReblog').onclick = () => reblogOverlay.classList.remove('open');
+reblogOverlay.onclick = e => { if(e.target===reblogOverlay) reblogOverlay.classList.remove('open'); };
+
+function openReblog(post) {
+  reblogPost = post;
+  document.getElementById('rbQuote').innerHTML = `<div class="qt">${esc(post.song.name)}</div><div style="font-size:0.82rem;margin-top:3px">${esc(post.song.artist)} · by <strong>${esc(post.authorName||'Anonymous')}</strong></div>`;
+  document.getElementById('rbComment').value = '';
+  reblogOverlay.classList.add('open');
+}
+
+document.getElementById('doReblogBtn').onclick = () => {
+  if (!reblogPost) return;
+  const comment = document.getElementById('rbComment').value.trim();
+  posts.unshift({ id:Date.now().toString(), type:'reblog', song:{...reblogPost.song}, originalAuthorName:reblogPost.authorName, originalAuthorColor:reblogPost.authorColor, originalPostId:reblogPost.id, caption:comment, tags:[], likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
+  const orig = posts.find(p=>p.id===reblogPost.id);
+  if (orig) { orig.reblogs=(orig.reblogs||0)+1; }
+  store('sb_posts', posts); renderFeed(); reblogOverlay.classList.remove('open'); toast('Reblogged!');
+};
+
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+const profileSetupOverlay = document.getElementById('profileSetupOverlay');
+const profileOverlay = document.getElementById('profileOverlay');
+let selColor = COLORS[0];
+
+COLORS.forEach((c,i) => {
+  const sw = document.createElement('div');
+  sw.className = 'swatch'+(i===0?' on':'');
+  sw.style.background = c;
+  sw.onclick = () => { document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('on')); sw.classList.add('on'); selColor=c; };
+  document.getElementById('colorPicker').appendChild(sw);
+});
+
+function openProfileSetup(editing=false) {
+  document.getElementById('profileSetupTitle').textContent = editing ? 'Edit profile' : 'Set up your profile';
+  if (editing && profile) {
+    document.getElementById('profileDisplayName').value = profile.displayName;
+    document.getElementById('profileUsername').value    = profile.username;
+    document.getElementById('profileBio').value         = profile.bio||'';
+    selColor = profile.color;
+    document.querySelectorAll('.swatch').forEach(sw => sw.classList.toggle('on', sw.style.background===profile.color));
+  }
+  profileSetupOverlay.classList.add('open');
+}
+
+document.getElementById('saveProfileBtn').onclick = () => {
+  const displayName = document.getElementById('profileDisplayName').value.trim().slice(0,30);
+  const username    = document.getElementById('profileUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,20);
+  const bio         = document.getElementById('profileBio').value.trim().slice(0,150);
+  if (!displayName||!username) { toast('Name and username are required.'); return; }
+  profile = { displayName, username, bio, color:selColor };
+  store('sb_profile', profile);
+  profileSetupOverlay.classList.remove('open');
+  renderNavAvatar(); toast('Profile saved!');
+};
+
+const navAvatar = document.getElementById('navAvatar');
+function renderNavAvatar() {
+  navAvatar.style.background = profile?.color||'#444';
+  navAvatar.textContent = initial(profile?.displayName);
+}
+navAvatar.onclick = () => { if(!profile) openProfileSetup(false); else openProfilePage(); };
+
+document.getElementById('closeProfile').onclick  = () => profileOverlay.classList.remove('open');
+profileOverlay.onclick = e => { if(e.target===profileOverlay) profileOverlay.classList.remove('open'); };
+document.getElementById('editProfileBtn').onclick = () => { profileOverlay.classList.remove('open'); openProfileSetup(true); };
+
+function openProfilePage() {
+  document.getElementById('profAvatar').style.background = profile.color;
+  document.getElementById('profAvatar').textContent      = initial(profile.displayName);
+  document.getElementById('profName').textContent        = profile.displayName;
+  document.getElementById('profUsername').textContent    = '@'+profile.username;
+  document.getElementById('profBio').textContent         = profile.bio||'';
+  const mine = posts.filter(p=>p.authorUsername===profile.username);
+  document.getElementById('statPosts').textContent   = mine.length;
+  document.getElementById('statLikes').textContent   = mine.reduce((s,p)=>s+p.likes,0);
+  document.getElementById('statReblogs').textContent = mine.reduce((s,p)=>s+(p.reblogs||0),0);
+  const list = document.getElementById('profPostsList');
+  list.innerHTML = mine.length ? '' : '<div style="color:var(--muted);font-size:0.9rem">No posts yet.</div>';
+  mine.forEach(p=>list.appendChild(buildPost(p)));
+  profileOverlay.classList.add('open');
+}
+
+// ── LISTENING ROOM ────────────────────────────────────────────────────────────
+const roomSetupOverlay = document.getElementById('roomSetupOverlay');
+const roomOverlay      = document.getElementById('roomOverlay');
+document.getElementById('openRoomBtn').onclick    = () => roomSetupOverlay.classList.add('open');
+document.getElementById('closeRoomSetup').onclick = () => roomSetupOverlay.classList.remove('open');
+roomSetupOverlay.onclick = e => { if(e.target===roomSetupOverlay) roomSetupOverlay.classList.remove('open'); };
+
+document.getElementById('roomSearchBtn').onclick = () => searchSongs(document.getElementById('roomSearch').value, document.getElementById('roomResults'), document.getElementById('roomSpinner'), song => {
+  roomSong = song;
+  document.getElementById('roomSelArt').src = song.art;
+  document.getElementById('roomSelTrack').textContent  = song.name;
+  document.getElementById('roomSelArtist').textContent = song.artist;
+  document.getElementById('roomSelSong').classList.add('open');
+  document.getElementById('startRoomBtn').disabled = false;
+});
+document.getElementById('roomSearch').onkeydown = e => { if(e.key==='Enter') document.getElementById('roomSearchBtn').click(); };
+document.getElementById('clearRoomSong').onclick = () => {
+  roomSong = null;
+  document.getElementById('roomSelSong').classList.remove('open');
+  document.getElementById('roomResults').innerHTML='';
+  document.getElementById('roomResults').classList.remove('open');
+  document.getElementById('roomSearch').value='';
+  document.getElementById('startRoomBtn').disabled=true;
+};
+
+document.getElementById('startRoomBtn').onclick = () => {
+  if (!roomSong) return;
+  const name = document.getElementById('roomName').value.trim()||'Listening Room';
+  activeRoom = { id:'room_'+Date.now(), name, song:{...roomSong}, host:profile?.username||'Anonymous', messages:[], createdAt:Date.now() };
+  roomSetupOverlay.classList.remove('open');
+  openRoom(activeRoom, true);
+  posts.unshift({ id:Date.now().toString(), type:'room', roomId:activeRoom.id, roomName:name, song:{...roomSong}, likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), caption:'', tags:[], ...authorInfo() });
+  store('sb_posts', posts); renderFeed();
+};
+
+document.getElementById('leaveRoomBtn').onclick = () => {
+  roomOverlay.classList.remove('open');
+  if(roomCh){roomCh.close();roomCh=null;}
+  activeRoom=null; toast('Left the room.');
+};
+
+function openRoom(room, isHost=false) {
+  document.getElementById('roomTitle').textContent = room.name;
+  document.getElementById('roomEmbed').innerHTML = room.song.embedUrl
+    ? `<iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" height="175" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="${esc(room.song.embedUrl)}"></iframe>`
+    : `<div style="color:var(--muted);padding:16px">${esc(room.song.name)} — ${esc(room.song.artist)}</div>`;
+  document.getElementById('chatMsgs').innerHTML='';
+  addSysMsg(isHost?'🎵 You started the room!':'🎵 You joined the room.');
+  roomOverlay.classList.add('open');
+  try {
+    if(roomCh) roomCh.close();
+    roomCh = new BroadcastChannel('sb_room_'+room.id);
+    roomCh.onmessage = e => { if(e.data.type==='msg') appendMsg(e.data.msg); };
+  } catch(e){}
+}
+function addSysMsg(text) {
+  const msgs = document.getElementById('chatMsgs');
+  const d=document.createElement('div'); d.className='room-msg sys'; d.textContent=text;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+}
+function appendMsg(msg) {
+  const msgs = document.getElementById('chatMsgs');
+  const d=document.createElement('div'); d.className='room-msg';
+  d.innerHTML=`${mkAvEl(msg.name,msg.color,'msg-av')}<div><div class="msg-name">${esc(msg.name)}</div><div class="msg-text">${esc(msg.text)}</div></div>`;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight;
+}
+function sendChatMsg() {
+  const inp=document.getElementById('chatInput');
+  const text=inp.value.trim(); if(!text||!activeRoom) return;
+  const msg={name:profile?.displayName||'Anonymous',color:profile?.color||'#444',text,ts:Date.now()};
+  activeRoom.messages.push(msg); appendMsg(msg);
+  if(roomCh) roomCh.postMessage({type:'msg',msg});
+  inp.value='';
+}
+document.getElementById('chatSendBtn').onclick = sendChatMsg;
+document.getElementById('chatInput').onkeydown = e => { if(e.key==='Enter') sendChatMsg(); };
+
+// ── SAFETY REPORT ────────────────────────────────────────────────────────────
+const safetyOverlay = document.getElementById('safetyOverlay');
+document.getElementById('openSafetyReport').onclick = e => { e.preventDefault(); safetyOverlay.classList.add('open'); };
+document.getElementById('closeSafety').onclick = () => safetyOverlay.classList.remove('open');
+safetyOverlay.onclick = e => { if(e.target===safetyOverlay) safetyOverlay.classList.remove('open'); };
+document.getElementById('submitReportBtn').onclick = () => {
+  const type = document.getElementById('reportType').value;
+  const desc  = document.getElementById('reportDesc').value.trim();
+  if (!type) { toast('Please select an issue type.'); return; }
+  if (!desc)  { toast('Please describe the issue.'); return; }
+  toast('Report noted. Email runawaylover228@gmail.com for urgent issues.');
+  safetyOverlay.classList.remove('open');
+  document.getElementById('reportType').value='';
+  document.getElementById('reportDesc').value='';
+};
+
+// ── FEED ─────────────────────────────────────────────────────────────────────
+function renderFeed() {
+  const feed = document.getElementById('feed');
+  if (!posts.length) { feed.innerHTML='<div class="empty"><strong>Nothing here yet.</strong>Hit <em>+ New Post</em> to share the first song.</div>'; return; }
+  feed.innerHTML='';
+  posts.forEach(p=>feed.appendChild(buildPost(p)));
+}
+
+function buildPost(post) {
+  const el = document.createElement('div');
+  el.className='post'; el.dataset.id=post.id;
+
+  let header='';
+  if (post.type==='reblog') header=`<div class="rb-header">${mkAvEl(post.originalAuthorName,post.originalAuthorColor,'rb-mini-av')}&nbsp;<strong>${esc(post.authorName||'?')}</strong> reblogged from <strong>${esc(post.originalAuthorName||'?')}</strong></div>`;
+  else if (post.type==='room') header=`<div class="room-badge"><div class="pulse"></div>Listening Room · <strong>${esc(post.roomName||'Room')}</strong><button class="join-btn">Join</button></div>`;
+
+  const embed = post.song.embedUrl
+    ? `<div class="am-embed"><iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" height="175" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="${esc(post.song.embedUrl)}"></iframe></div>`
+    : `<div style="padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);font-size:0.85rem">${esc(post.song.name)} — ${esc(post.song.artist)}</div>`;
+
+  const body = (post.caption||post.tags?.length)
+    ? `<div class="post-body">${post.caption?`<div class="post-caption">${esc(post.caption)}</div>`:''} ${post.tags?.length?`<div class="post-tags">${post.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>`:''}</div>` : '';
+
+  el.innerHTML=`
+    <button class="del-post">🗑</button>
+    ${header}
+    <div class="post-author">${mkAvEl(post.authorName,post.authorColor,'small')}<span class="pname">${esc(post.authorName||'Anonymous')}</span>${post.authorUsername?`<span class="phandle">@${esc(post.authorUsername)}</span>`:''}</div>
+    ${embed}${body}
+    <div class="post-footer">
+      <span class="post-time">${timeAgo(post.createdAt)}</span>
+      <button class="act like-btn${post.liked?' liked':''}"><span>${post.liked?'♥':'♡'}</span><span class="lc">${post.likes}</span></button>
+      <button class="act rb-btn"><span>↻</span><span class="rc">${post.reblogs||0}</span></button>
+      <button class="act cmt-toggle"><span>💬</span><span class="cc">${post.comments.length}</span></button>
+    </div>
+    <div class="comments">
+      <div class="cmt-list"></div>
+      <div class="cmt-form"><input type="text" placeholder="Add a comment…" maxlength="300" /><button>Send</button></div>
+    </div>`;
+
+  renderComments(el, post);
+
+  const joinBtn = el.querySelector('.join-btn');
+  if (joinBtn) joinBtn.onclick = () => { if(!activeRoom){toast('No active room yet.');return;} openRoom(activeRoom,false); };
+
+  el.querySelector('.del-post').onclick = () => {
+    if(!confirm('Delete this post?')) return;
+    posts=posts.filter(p=>p.id!==post.id); store('sb_posts',posts); el.remove();
+    if(!posts.length) renderFeed();
+  };
+
+  el.querySelector('.like-btn').onclick = () => {
+    const p=posts.find(x=>x.id===post.id); if(!p) return;
+    p.liked=!p.liked; p.likes+=p.liked?1:-1; store('sb_posts',posts);
+    const btn=el.querySelector('.like-btn');
+    btn.classList.toggle('liked',p.liked);
+    btn.querySelector('span').textContent=p.liked?'♥':'♡';
+    btn.querySelector('.lc').textContent=p.likes;
+  };
+
+  el.querySelector('.rb-btn').onclick = () => openReblog(posts.find(x=>x.id===post.id)||post);
+
+  const section=el.querySelector('.comments');
+  el.querySelector('.cmt-toggle').onclick = () => section.classList.toggle('open');
+
+  const cinput=el.querySelector('.cmt-form input');
+  const addCmt=()=>{
+    const text=cinput.value.trim(); if(!text) return;
+    const p=posts.find(x=>x.id===post.id); if(!p) return;
+    p.comments.push({id:Date.now().toString(),text,createdAt:Date.now(),...authorInfo()});
+    store('sb_posts',posts); cinput.value='';
+    el.querySelector('.cc').textContent=p.comments.length;
+    renderComments(el,p); section.classList.add('open');
+  };
+  el.querySelector('.cmt-form button').onclick=addCmt;
+  cinput.onkeydown=e=>{if(e.key==='Enter')addCmt();};
+  return el;
+}
+
+function renderComments(postEl, post) {
+  const list=postEl.querySelector('.cmt-list'); list.innerHTML='';
+  post.comments.forEach(c=>{
+    const d=document.createElement('div'); d.className='cmt';
+    d.innerHTML=`<div class="cmt-author">${mkAvEl(c.authorName,c.authorColor,'small')}<span class="cn">${esc(c.authorName||'Anonymous')}</span>${c.authorUsername?`<span class="ch">@${esc(c.authorUsername)}</span>`:''}</div><div class="cmt-text">${esc(c.text)}</div><button class="del-cmt">✕</button>`;
+    d.querySelector('.del-cmt').onclick=()=>{
+      const p=posts.find(x=>x.id===post.id); if(!p) return;
+      p.comments=p.comments.filter(x=>x.id!==c.id); store('sb_posts',posts);
+      postEl.querySelector('.cc').textContent=p.comments.length;
+      renderComments(postEl,p);
     };
-  }
-
-  // ─── COMPOSE POST ────────────────────────────────────────────────────────────
-  const composeOverlay = document.getElementById('composeOverlay');
-  document.getElementById('openCompose').onclick = () => composeOverlay.classList.add('open');
-  document.getElementById('closeCompose').onclick = closeCompose;
-  composeOverlay.onclick = e => { if (e.target === composeOverlay) closeCompose(); };
-
-  bindSearch('searchInput','searchBtn','searchResults','searchSpinner','selectedSong','selectedArt','selectedTrack','selectedArtist','clearSong', song => {
-    selectedSongData = song;
-    document.getElementById('postBtn').disabled = !song;
+    list.appendChild(d);
   });
+}
 
-  function closeCompose() {
-    composeOverlay.classList.remove('open');
-    ['searchInput','captionInput','tagsInput'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('searchResults').innerHTML = '';
-    document.getElementById('searchResults').classList.remove('visible');
-    document.getElementById('selectedSong').classList.remove('visible');
-    selectedSongData = null;
-    document.getElementById('postBtn').disabled = true;
-  }
-
-  document.getElementById('postBtn').onclick = () => {
-    if (!selectedSongData) return;
-    const caption = document.getElementById('captionInput').value.trim();
-    const tags    = document.getElementById('tagsInput').value.split(',').map(t => t.trim()).filter(Boolean);
-    const post = {
-      id: Date.now().toString(), type: 'post',
-      song: { ...selectedSongData }, caption, tags,
-      likes: 0, liked: false, reblogs: 0, comments: [],
-      createdAt: Date.now(), ...authorInfo(),
-    };
-    posts.unshift(post); savePosts(); renderFeed(); closeCompose();
-    showToast('Posted!');
-  };
-
-  // ─── REBLOG ───────────────────────────────────────────────────────────────────
-  const reblogOverlay = document.getElementById('reblogOverlay');
-  document.getElementById('closeReblog').onclick = () => reblogOverlay.classList.remove('open');
-  reblogOverlay.onclick = e => { if (e.target === reblogOverlay) reblogOverlay.classList.remove('open'); };
-
-  function openReblog(post) {
-    reblogTarget = post;
-    document.getElementById('reblogQuote').innerHTML =
-      `<div class="q-track">${esc(post.song.name)}</div><div style="font-size:0.82rem;margin-top:3px">${esc(post.song.artist)} · originally by <strong>${esc(post.authorName||'Anonymous')}</strong></div>`;
-    document.getElementById('reblogComment').value = '';
-    reblogOverlay.classList.add('open');
-  }
-
-  document.getElementById('doReblogBtn').onclick = () => {
-    if (!reblogTarget) return;
-    const comment = document.getElementById('reblogComment').value.trim();
-    const post = {
-      id: Date.now().toString(), type: 'reblog',
-      song: { ...reblogTarget.song },
-      originalAuthorName: reblogTarget.authorName,
-      originalAuthorUsername: reblogTarget.authorUsername,
-      originalAuthorColor: reblogTarget.authorColor,
-      originalPostId: reblogTarget.id,
-      caption: comment, tags: [],
-      likes: 0, liked: false, reblogs: 0, comments: [],
-      createdAt: Date.now(), ...authorInfo(),
-    };
-    // bump original reblog count
-    const orig = posts.find(p => p.id === reblogTarget.id);
-    if (orig) { orig.reblogs = (orig.reblogs || 0) + 1; savePosts(); }
-    posts.unshift(post); savePosts(); renderFeed();
-    reblogOverlay.classList.remove('open');
-    showToast('Reblogged!');
-  };
-
-  // ─── PROFILE SETUP ────────────────────────────────────────────────────────────
-  const profileSetupOverlay = document.getElementById('profileSetupOverlay');
-  let selectedColor = AVATAR_COLORS[0];
-
-  AVATAR_COLORS.forEach((c, i) => {
-    const sw = document.createElement('div');
-    sw.className = 'color-swatch' + (i === 0 ? ' selected' : '');
-    sw.style.background = c;
-    sw.onclick = () => {
-      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected'); selectedColor = c;
-    };
-    document.getElementById('colorPicker').appendChild(sw);
-  });
-
-  function openProfileSetup(editing = false) {
-    document.getElementById('profileSetupTitle').textContent = editing ? 'Edit profile' : 'Set up your profile';
-    if (editing && profile) {
-      document.getElementById('profileDisplayName').value = profile.displayName;
-      document.getElementById('profileUsername').value    = profile.username;
-      document.getElementById('profileBio').value         = profile.bio || '';
-      selectedColor = profile.color;
-      document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.toggle('selected', sw.style.background === profile.color));
-    }
-    profileSetupOverlay.classList.add('open');
-  }
-
-  document.getElementById('saveProfileBtn').onclick = () => {
-    const displayName = document.getElementById('profileDisplayName').value.trim().slice(0, 30);
-    const username    = document.getElementById('profileUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0, 20);
-    const bio         = document.getElementById('profileBio').value.trim().slice(0, 150);
-    if (!displayName || !username) { showToast('Name and username are required.'); return; }
-    profile = { displayName, username, bio, color: selectedColor };
-    saveProfile(); profileSetupOverlay.classList.remove('open');
-    renderNavAvatar(); showToast('Profile saved!');
-  };
-
-  // ─── NAV AVATAR ──────────────────────────────────────────────────────────────
-  const navAvatar = document.getElementById('navAvatar');
-  function renderNavAvatar() { applyAvatar(navAvatar, profile); }
-  navAvatar.onclick = () => { if (!profile) openProfileSetup(false); else openProfilePage(); };
-
-  // ─── PROFILE PAGE ────────────────────────────────────────────────────────────
-  const profileOverlay = document.getElementById('profileOverlay');
-  document.getElementById('closeProfile').onclick   = () => profileOverlay.classList.remove('open');
-  profileOverlay.onclick = e => { if (e.target === profileOverlay) profileOverlay.classList.remove('open'); };
-  document.getElementById('editProfileBtn').onclick = () => { profileOverlay.classList.remove('open'); openProfileSetup(true); };
-
-  function openProfilePage() {
-    applyAvatar(document.getElementById('profilePageAvatar'), profile);
-    document.getElementById('profilePageName').textContent     = profile.displayName;
-    document.getElementById('profilePageUsername').textContent = '@' + profile.username;
-    document.getElementById('profilePageBio').textContent      = profile.bio || '';
-    const myPosts = posts.filter(p => p.authorUsername === profile.username);
-    document.getElementById('statPosts').textContent   = myPosts.length;
-    document.getElementById('statLikes').textContent   = myPosts.reduce((s, p) => s + p.likes, 0);
-    document.getElementById('statReblogs').textContent = myPosts.reduce((s, p) => s + (p.reblogs||0), 0);
-    const list = document.getElementById('profilePostsList');
-    list.innerHTML = myPosts.length ? '' : '<div style="color:var(--muted);font-size:0.9rem">No posts yet.</div>';
-    myPosts.forEach(p => list.appendChild(buildPostEl(p)));
-    profileOverlay.classList.add('open');
-  }
-
-  // ─── LISTENING ROOM ───────────────────────────────────────────────────────────
-  const roomSetupOverlay = document.getElementById('roomSetupOverlay');
-  const roomOverlay      = document.getElementById('roomOverlay');
-  document.getElementById('openRoomBtn').onclick       = () => roomSetupOverlay.classList.add('open');
-  document.getElementById('closeRoomSetup').onclick    = () => roomSetupOverlay.classList.remove('open');
-  roomSetupOverlay.onclick = e => { if (e.target === roomSetupOverlay) roomSetupOverlay.classList.remove('open'); };
-
-  bindSearch('roomSearchInput','roomSearchBtn','roomSearchResults','roomSpinner','roomSelectedSong','roomSelectedArt','roomSelectedTrack','roomSelectedArtist','clearRoomSong', song => {
-    roomSongData = song;
-    document.getElementById('startRoomBtn').disabled = !song;
-  });
-
-  document.getElementById('startRoomBtn').onclick = () => {
-    if (!roomSongData) return;
-    const name = document.getElementById('roomName').value.trim() || 'Listening Room';
-    activeRoom = {
-      id: 'room_' + Date.now(),
-      name, song: { ...roomSongData },
-      host: profile ? profile.username : 'Anonymous',
-      messages: [],
-      createdAt: Date.now(),
-    };
-    roomSetupOverlay.classList.remove('open');
-    openRoom(activeRoom, true);
-    // post a room card to the feed
-    const post = {
-      id: Date.now().toString(), type: 'room',
-      roomId: activeRoom.id, roomName: name,
-      song: { ...roomSongData },
-      likes: 0, liked: false, reblogs: 0, comments: [],
-      createdAt: Date.now(), ...authorInfo(),
-      caption: '', tags: [],
-    };
-    posts.unshift(post); savePosts(); renderFeed();
-  };
-
-  document.getElementById('leaveRoomBtn').onclick = () => {
-    roomOverlay.classList.remove('open');
-    if (roomChannel) { roomChannel.close(); roomChannel = null; }
-    activeRoom = null;
-    showToast('Left the room.');
-  };
-
-  function openRoom(room, isHost = false) {
-    document.getElementById('roomTitle').textContent = room.name;
-    document.getElementById('roomEmbed').innerHTML = room.song.embedUrl
-      ? `<iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" height="175" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="${esc(room.song.embedUrl)}"></iframe>`
-      : `<div style="color:var(--muted);padding:16px">${esc(room.song.name)} — ${esc(room.song.artist)}</div>`;
-    document.getElementById('roomInfo').textContent = `${room.song.name} · ${room.song.artist}`;
-    const msgs = document.getElementById('roomMessages');
-    msgs.innerHTML = '';
-    room.messages.forEach(m => appendRoomMessage(m));
-    addSystemMessage(isHost ? '🎵 You started the room!' : '🎵 You joined the room.');
-    roomOverlay.classList.add('open');
-    // BroadcastChannel for same-machine tab sync
-    try {
-      if (roomChannel) roomChannel.close();
-      roomChannel = new BroadcastChannel('sb_room_' + room.id);
-      roomChannel.onmessage = e => {
-        if (e.data.type === 'msg') appendRoomMessage(e.data.msg);
-      };
-    } catch(e) {}
-  }
-
-  function addSystemMessage(text) {
-    const msgs = document.getElementById('roomMessages');
-    const div = document.createElement('div');
-    div.className = 'room-msg system';
-    div.textContent = text;
-    msgs.appendChild(div);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  function appendRoomMessage(msg) {
-    const msgs = document.getElementById('roomMessages');
-    const div = document.createElement('div');
-    div.className = 'room-msg';
-    div.innerHTML = `${makeAvatarEl(msg.name, msg.color, 'msg-avatar')}<div class="msg-body"><div class="msg-name">${esc(msg.name)}</div><div class="msg-text">${esc(msg.text)}</div></div>`;
-    msgs.appendChild(div);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  const roomChatInput = document.getElementById('roomChatInput');
-  function sendRoomMessage() {
-    const text = roomChatInput.value.trim();
-    if (!text || !activeRoom) return;
-    const msg = {
-      name: profile ? profile.displayName : 'Anonymous',
-      color: profile ? profile.color : '#444',
-      text, ts: Date.now(),
-    };
-    activeRoom.messages.push(msg);
-    appendRoomMessage(msg);
-    if (roomChannel) roomChannel.postMessage({ type: 'msg', msg });
-    roomChatInput.value = '';
-  }
-  document.getElementById('roomSendBtn').onclick = sendRoomMessage;
-  roomChatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendRoomMessage(); });
-
-  // ─── FEED ────────────────────────────────────────────────────────────────────
-  function renderFeed() {
-    const feed = document.getElementById('feed');
-    if (!posts.length) {
-      feed.innerHTML = `<div class="empty-state"><strong>Nothing here yet.</strong>Hit <em>+ New Post</em> to share the first song.</div>`;
-      return;
-    }
-    feed.innerHTML = '';
-    posts.forEach(p => feed.appendChild(buildPostEl(p)));
-  }
-
-  function buildPostEl(post) {
-    const el = document.createElement('div');
-    el.className = 'post';
-    el.dataset.id = post.id;
-
-    let header = '';
-    if (post.type === 'reblog') {
-      header = `<div class="reblog-header">${makeAvatarEl(post.originalAuthorName,'','rb-avatar')}&nbsp;<strong>${esc(post.authorName||'?')}</strong> reblogged from <strong>${esc(post.originalAuthorName||'?')}</strong></div>`;
-    } else if (post.type === 'room') {
-      header = `<div class="room-badge"><div class="pulse"></div>Listening Room · <strong>${esc(post.roomName||'Room')}</strong><button class="join-room-btn" data-room-id="${esc(post.roomId)}">Join</button></div>`;
-    }
-
-    const embedHtml = post.song.embedUrl
-      ? `<div class="am-embed"><iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" height="175" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" src="${esc(post.song.embedUrl)}"></iframe></div>`
-      : `<div style="padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);font-size:0.85rem">${esc(post.song.name)} — ${esc(post.song.artist)}</div>`;
-
-    const body = (post.caption || post.tags?.length)
-      ? `<div class="post-body">${post.caption ? `<div class="post-caption">${esc(post.caption)}</div>` : ''}${post.tags?.length ? `<div class="post-tags">${post.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}</div>`
-      : '';
-
-    el.innerHTML = `
-      <button class="delete-post" title="Delete">🗑</button>
-      ${header}
-      <div class="post-author">
-        ${makeAvatarEl(post.authorName, post.authorColor, 'small')}
-        <span class="name">${esc(post.authorName||'Anonymous')}</span>
-        ${post.authorUsername ? `<span class="handle">@${esc(post.authorUsername)}</span>` : ''}
-      </div>
-      ${embedHtml}${body}
-      <div class="post-footer">
-        <span class="post-time">${timeAgo(post.createdAt)}</span>
-        <button class="act like-btn${post.liked?' liked':''}" title="Like">
-          <span>${post.liked?'♥':'♡'}</span><span class="like-count">${post.likes}</span>
-        </button>
-        <button class="act reblog-btn${post.reposted?' reposted':''}" title="Reblog">
-          <span>↻</span><span class="rb-count">${post.reblogs||0}</span>
-        </button>
-        <button class="act comment-toggle" title="Comments">
-          <span>💬</span><span class="cc">${post.comments.length}</span>
-        </button>
-      </div>
-      <div class="comments-section">
-        <div class="comment-list"></div>
-        <div class="comment-form">
-          <input type="text" placeholder="Add a comment…" maxlength="300" />
-          <button>Send</button>
-        </div>
-      </div>`;
-
-    renderComments(el, post);
-
-    // join room button
-    const joinBtn = el.querySelector('.join-room-btn');
-    if (joinBtn) {
-      joinBtn.onclick = () => {
-        if (!activeRoom) { showToast('No active room — the host needs to start it first.'); return; }
-        openRoom(activeRoom, false);
-      };
-    }
-
-    el.querySelector('.delete-post').onclick = () => {
-      if (!confirm('Delete this post?')) return;
-      posts = posts.filter(p => p.id !== post.id); savePosts(); el.remove();
-      if (!posts.length) renderFeed();
-    };
-
-    el.querySelector('.like-btn').onclick = () => {
-      const p = posts.find(x => x.id === post.id); if (!p) return;
-      p.liked = !p.liked; p.likes += p.liked ? 1 : -1; savePosts();
-      const btn = el.querySelector('.like-btn');
-      btn.classList.toggle('liked', p.liked);
-      btn.querySelector('span').textContent = p.liked ? '♥' : '♡';
-      btn.querySelector('.like-count').textContent = p.likes;
-    };
-
-    el.querySelector('.reblog-btn').onclick = () => {
-      const p = posts.find(x => x.id === post.id) || post;
-      openReblog(p);
-    };
-
-    const section = el.querySelector('.comments-section');
-    el.querySelector('.comment-toggle').onclick = () => section.classList.toggle('open');
-
-    const cinput = el.querySelector('.comment-form input');
-    const addCmt = () => {
-      const text = cinput.value.trim(); if (!text) return;
-      const p = posts.find(x => x.id === post.id); if (!p) return;
-      p.comments.push({ id: Date.now().toString(), text, createdAt: Date.now(), ...authorInfo() });
-      savePosts(); cinput.value = '';
-      el.querySelector('.cc').textContent = p.comments.length;
-      renderComments(el, p); section.classList.add('open');
-    };
-    el.querySelector('.comment-form button').onclick = addCmt;
-    cinput.addEventListener('keydown', e => { if (e.key === 'Enter') addCmt(); });
-
-    return el;
-  }
-
-  function renderComments(postEl, post) {
-    const list = postEl.querySelector('.comment-list');
-    list.innerHTML = '';
-    post.comments.forEach(c => {
-      const div = document.createElement('div');
-      div.className = 'comment';
-      div.innerHTML = `
-        <div class="comment-author">
-          ${makeAvatarEl(c.authorName, c.authorColor, 'small')}
-          <span class="cname">${esc(c.authorName||'Anonymous')}</span>
-          ${c.authorUsername ? `<span class="chandle">@${esc(c.authorUsername)}</span>` : ''}
-        </div>
-        <div class="comment-text">${esc(c.text)}</div>
-        <button class="del-comment">✕</button>`;
-      div.querySelector('.del-comment').onclick = () => {
-        const p = posts.find(x => x.id === post.id); if (!p) return;
-        p.comments = p.comments.filter(x => x.id !== c.id); savePosts();
-        postEl.querySelector('.cc').textContent = p.comments.length;
-        renderComments(postEl, p);
-      };
-      list.appendChild(div);
-    });
-  }
-
-  // ─── SAFETY REPORTS ──────────────────────────────────────────────────────────
-  const safetyOverlay = document.getElementById('safetyOverlay');
-  document.getElementById('closeSafety').onclick = () => safetyOverlay.classList.remove('open');
-  safetyOverlay.onclick = e => { if (e.target === safetyOverlay) safetyOverlay.classList.remove('open'); };
-
-  document.querySelectorAll('[data-open-safety]').forEach(el => {
-    el.onclick = () => safetyOverlay.classList.add('open');
-  });
-
-  document.getElementById('submitReportBtn').onclick = async () => {
-    const type = document.getElementById('reportType').value;
-    const description = document.getElementById('reportDescription').value.trim();
-    const btn = document.getElementById('submitReportBtn');
-    if (!type) { showToast('Please select an issue type.'); return; }
-    if (!description) { showToast('Please describe the issue.'); return; }
-    btn.disabled = true; btn.textContent = 'Submitting…';
-    try {
-      if (typeof submitSafetyReport === 'function') {
-        await submitSafetyReport({
-          type, description,
-          reporterName: profile ? profile.displayName : null,
-        });
-        showToast('Report submitted. Thank you.');
-      } else {
-        // Supabase not yet configured — store locally as fallback
-        showToast('Report noted. Connect Supabase to send reports to your safety team.');
-      }
-      safetyOverlay.classList.remove('open');
-      document.getElementById('reportType').value = '';
-      document.getElementById('reportDescription').value = '';
-    } catch(e) {
-      showToast('Failed to submit — please email runawaylover228@gmail.com directly.');
-    } finally {
-      btn.disabled = false; btn.textContent = 'Submit Report';
-    }
-  };
-
-  // ─── INIT ────────────────────────────────────────────────────────────────────
-  renderNavAvatar();
-  if (!profile) openProfileSetup(false);
-  renderFeed();
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderNavAvatar();
+if (!profile) openProfileSetup(false);
+renderFeed();
 </script>
 </body>
 </html>
