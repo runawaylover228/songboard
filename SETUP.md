@@ -1,6 +1,6 @@
-# Supabase Backend Setup Guide
+# Songboard — Supabase Setup Guide
 
-Follow these steps exactly. It takes about 15 minutes.
+This guide sets up real user accounts and a shared feed. Takes about 20 minutes.
 
 ---
 
@@ -8,12 +8,11 @@ Follow these steps exactly. It takes about 15 minutes.
 
 1. Go to **https://supabase.com** and click **Start your project**
 2. Sign up with GitHub (easiest) or email
-3. Click **New project**
-4. Fill in:
+3. Click **New project** and fill in:
    - **Name:** songboard
-   - **Database password:** pick a strong password and save it somewhere safe
+   - **Database password:** pick a strong one and save it
    - **Region:** pick the one closest to you
-5. Click **Create new project** and wait ~2 minutes for it to set up
+4. Click **Create new project** — wait ~2 minutes for setup
 
 ---
 
@@ -21,70 +20,72 @@ Follow these steps exactly. It takes about 15 minutes.
 
 1. In your Supabase dashboard, click **SQL Editor** in the left sidebar
 2. Click **New query**
-3. Open the file `schema.sql` from your songboard folder
-4. Copy the entire contents and paste it into the SQL editor
-5. Click **Run** (or press Ctrl+Enter)
-6. You should see "Success. No rows returned" — that means it worked
+3. Copy the entire contents of `schema.sql` and paste it in
+4. Click **Run** (or Ctrl+Enter)
+5. You should see "Success. No rows returned"
 
 ---
 
-## Step 3 — Get your API keys
+## Step 3 — Disable email confirmation (recommended for launch)
 
-1. In the Supabase dashboard, click **Project Settings** (gear icon, bottom left)
+By default Supabase requires users to confirm their email before logging in.
+To skip this during early testing:
+
+1. In the dashboard, go to **Authentication → Providers → Email**
+2. Turn off **Confirm email**
+3. Click **Save**
+
+You can turn this back on later once you have a real email domain.
+
+---
+
+## Step 4 — Get your API keys
+
+1. Go to **Project Settings** (gear icon, bottom left)
 2. Click **API**
 3. Copy two values:
-   - **Project URL** (looks like `https://abcdefgh.supabase.co`)
-   - **anon public** key (long string starting with `eyJ...`)
+   - **Project URL** — looks like `https://abcdefgh.supabase.co`
+   - **anon public** key — long string starting with `eyJ...`
 
 ---
 
-## Step 4 — Add your keys to the app
+## Step 5 — Add your keys to the app
 
-1. Open `supabase.js` in your songboard folder
-2. Replace the placeholders:
+1. Open `index.html` in your songboard folder
+2. Near the top of the `<script>` section, find these two lines:
    ```
-   const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   ← paste Project URL here
-   const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';  ← paste anon key here
+   const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+   const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
    ```
-3. Save the file
+3. Replace both placeholder values with your real keys
+4. Save the file
 
 ---
 
-## Step 5 — Push to GitHub
+## Step 6 — Push to GitHub
 
-Open PowerShell, navigate to your songboard folder, and run:
+Open PowerShell and run:
 
 ```
 cd C:\Users\Robyn\Desktop\songboard
-git add .
-git commit -m "Connect Supabase backend"
+git add index.html schema.sql
+git commit -m "Connect Supabase — enable real accounts"
 git push
 ```
 
 ---
 
-## Step 6 — Verify it's working
+## Step 7 — Verify it's working
 
-1. Open your live site at **https://runawaylover228.github.io/songboard**
-2. Click **Report a Safety Issue** in the footer
-3. Submit a test report
-4. Go to your Supabase dashboard → **Table Editor** → **safety_reports**
-5. You should see your test report appear there
+1. Open **https://runawaylover228.github.io/songboard**
+2. Pass the age gate
+3. You should see a **Sign Up / Log In** screen
+4. Create an account — you should be taken straight into the app
+5. Post a song — it should appear in the feed
 
----
-
-## Step 7 — View safety reports (ongoing)
-
-Whenever you want to check for safety reports:
-
-1. Go to **https://supabase.com** → your project
-2. Click **Table Editor** → **safety_reports**
-3. Reports are shown newest first
-4. You can change the `status` column from `open` → `reviewed` → `resolved` or `escalated`
-
-For serious reports (especially `child_safety` type), escalate immediately to:
-- **NCMEC CyberTipline:** https://www.cybertipline.org
-- **FBI Tips:** https://www.fbi.gov/tips
+To verify data is reaching Supabase:
+- Dashboard → **Table Editor** → **profiles** → your profile should be there
+- Dashboard → **Table Editor** → **posts** → your post should be there
 
 ---
 
@@ -92,14 +93,29 @@ For serious reports (especially `child_safety` type), escalate immediately to:
 
 | Table | Purpose |
 |---|---|
-| `safety_reports` | Safety issues reported by users — review these regularly |
-| `age_verification_log` | COPPA audit trail — proves you are checking ages |
-| `parental_consent_requests` | Under-13 parent notification records (future use) |
+| `profiles` | User profiles (username, display name, colour) |
+| `posts` | All posts, reblogs, and listening rooms |
+| `likes` | Which users liked which posts |
+| `comments` | Comments on posts |
+| `safety_reports` | Reports submitted via the safety modal — review regularly |
+| `age_verification_log` | COPPA audit trail |
 
 ---
 
-## Next steps (future)
+## Viewing safety reports
 
-- **Set up email alerts** when a new safety report comes in (Supabase → Database → Webhooks → point to a free service like Make.com or Zapier → send yourself an email)
-- **Deploy parental consent emails** using Supabase Edge Functions + Resend.com (free tier)
-- **Add real user accounts** — replace localStorage profiles with Supabase Auth
+Whenever you want to check for safety reports:
+
+1. Go to **https://supabase.com** → your project
+2. Click **Table Editor** → **safety_reports**
+3. For serious reports (especially `child_safety`), escalate immediately:
+   - **NCMEC CyberTipline:** https://www.cybertipline.org
+   - **FBI Tips:** https://www.fbi.gov/tips
+
+---
+
+## Next steps
+
+- **Email alerts for safety reports:** Supabase → Database → Webhooks → connect to Make.com or Zapier → email yourself
+- **Custom domain:** point a domain at GitHub Pages in repo Settings → Pages
+- **Production hosting:** migrate to Vercel + Supabase Pro when traffic grows

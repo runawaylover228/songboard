@@ -19,14 +19,20 @@
     .logo { font-size: 1.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
     .logo span { color: var(--text); }
     .nav-right { display: flex; align-items: center; gap: 10px; }
-    .nav-btn { border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .nav-btn { border: none; border-radius: 8px; padding: 8px 16px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.15s; font-family: inherit; }
     .nav-btn.primary { background: var(--accent2); color: #fff; }
     .nav-btn.primary:hover { background: var(--accent); }
     .nav-btn.room-btn { background: rgba(74,222,128,0.15); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
     .nav-btn.room-btn:hover { background: rgba(74,222,128,0.25); }
+    .nav-btn.ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+    .nav-btn.ghost:hover { color: var(--text); }
 
     /* LAYOUT */
     .layout { max-width: 680px; margin: 0 auto; padding: 32px 16px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* SETUP BANNER */
+    .setup-banner { background: rgba(167,139,250,0.08); border-bottom: 1px solid rgba(167,139,250,0.2); padding: 10px 24px; text-align: center; font-size: 0.85rem; color: var(--muted); }
+    .setup-banner a { color: var(--accent); }
 
     /* AVATAR */
     .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; user-select: none; }
@@ -52,7 +58,7 @@
     /* SEARCH */
     .search-row { display: flex; gap: 8px; align-items: center; }
     .search-row .field { flex: 1; }
-    .srch-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: background 0.15s; }
+    .srch-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 10px 16px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: background 0.15s; font-family: inherit; }
     .srch-btn:hover { background: var(--border); }
     .search-results { max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; display: none; flex-direction: column; }
     .search-results.open { display: flex; }
@@ -74,9 +80,9 @@
     .sel-song .clr { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
 
     /* BUTTONS */
-    .btn-primary { background: var(--accent2); color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; width: 100%; }
+    .btn-primary { background: var(--accent2); color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s; width: 100%; font-family: inherit; }
     .btn-primary:hover { background: var(--accent); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
     /* COLOR PICKER */
     .color-picker { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -103,7 +109,7 @@
     .room-badge { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: rgba(74,222,128,0.08); border-bottom: 1px solid rgba(74,222,128,0.2); font-size: 0.82rem; color: var(--green); font-weight: 600; }
     .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-    .join-btn { margin-left: auto; background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+    .join-btn { margin-left: auto; background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 6px; padding: 4px 12px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
     .join-btn:hover { background: rgba(74,222,128,0.3); }
 
     /* EMBED */
@@ -119,7 +125,7 @@
     /* POST FOOTER */
     .post-footer { display: flex; align-items: center; gap: 4px; padding: 8px 16px; border-top: 1px solid var(--border); }
     .post-time { color: var(--muted); font-size: 0.78rem; margin-right: auto; }
-    .act { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; padding: 5px 9px; border-radius: 6px; display: flex; align-items: center; gap: 4px; transition: color 0.15s, background 0.15s; }
+    .act { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; padding: 5px 9px; border-radius: 6px; display: flex; align-items: center; gap: 4px; transition: color 0.15s, background 0.15s; font-family: inherit; }
     .act:hover { color: var(--text); background: var(--surface2); }
     .act.liked { color: var(--danger); }
 
@@ -139,9 +145,9 @@
     .del-cmt { position: absolute; top: 8px; right: 8px; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; opacity: 0; }
     .cmt:hover .del-cmt { opacity: 1; }
     .cmt-form { padding: 0 16px 12px; display: flex; gap: 8px; }
-    .cmt-form input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-size: 0.88rem; outline: none; }
+    .cmt-form input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-size: 0.88rem; outline: none; font-family: inherit; }
     .cmt-form input:focus { border-color: var(--accent); }
-    .cmt-form button { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .cmt-form button { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); border-radius: 8px; padding: 8px 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: inherit; }
 
     /* PROFILE PAGE */
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: min(600px, 100%); display: flex; flex-direction: column; position: relative; }
@@ -152,7 +158,7 @@
     .prof-stats { display: flex; gap: 24px; margin-top: 12px; }
     .prof-stat .num { font-weight: 800; font-size: 1.1rem; }
     .prof-stat .lbl { color: var(--muted); font-size: 0.78rem; }
-    .edit-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; margin-left: auto; align-self: flex-start; }
+    .edit-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; margin-left: auto; align-self: flex-start; font-family: inherit; }
     .edit-btn:hover { background: var(--border); }
     .prof-posts { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
     .prof-posts h3 { font-size: 0.88rem; font-weight: 700; color: var(--muted); letter-spacing: 0.05em; }
@@ -162,7 +168,7 @@
     .room-overlay.open { display: flex; }
     .room-nav { display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 56px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .room-title { font-weight: 700; font-size: 1rem; flex: 1; }
-    .leave-btn { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: var(--danger); border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .leave-btn { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: var(--danger); border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; }
     .room-body { display: flex; flex: 1; overflow: hidden; }
     .room-player { flex: 1; display: flex; flex-direction: column; padding: 24px; gap: 16px; overflow-y: auto; border-right: 1px solid var(--border); }
     .room-player iframe { width: 100%; border-radius: 12px; border: none; }
@@ -175,9 +181,9 @@
     .msg-text { white-space: pre-wrap; word-break: break-word; }
     .room-msg.sys { color: var(--muted); font-style: italic; font-size: 0.82rem; }
     .chat-input { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-    .chat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 0.88rem; outline: none; }
+    .chat-input input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 0.88rem; outline: none; font-family: inherit; }
     .chat-input input:focus { border-color: var(--green); }
-    .chat-input button { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 8px; padding: 9px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .chat-input button { background: rgba(74,222,128,0.2); border: 1px solid rgba(74,222,128,0.4); color: var(--green); border-radius: 8px; padding: 9px 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: inherit; }
     @media (max-width: 600px) { .room-chat { display: none; } }
 
     /* AGE GATE */
@@ -188,7 +194,7 @@
     .age-logo span { color: var(--text); }
     .age-box h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
     .age-box p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
-    .age-box input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 12px 14px; font-size: 1.1rem; text-align: center; outline: none; width: 100%; letter-spacing: 2px; }
+    .age-box input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 12px 14px; font-size: 1.1rem; text-align: center; outline: none; width: 100%; letter-spacing: 2px; font-family: inherit; }
     .age-box input:focus { border-color: var(--accent); }
     .age-fine { font-size: 0.75rem; color: var(--muted); line-height: 1.6; }
     .age-fine a { color: var(--accent); }
@@ -200,6 +206,15 @@
     .blocked-box .icon { font-size: 3rem; }
     .blocked-box h2 { font-size: 1.2rem; font-weight: 800; }
     .blocked-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* AUTH SCREEN */
+    .auth-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px; width: min(440px, 100%); display: flex; flex-direction: column; gap: 14px; }
+    .auth-logo { font-size: 1.8rem; font-weight: 900; color: var(--accent); text-align: center; margin-bottom: 4px; }
+    .auth-logo span { color: var(--text); }
+    .auth-tabs { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 4px; gap: 4px; }
+    .auth-tab { flex: 1; border: none; border-radius: 7px; padding: 9px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.15s; background: transparent; color: var(--muted); font-family: inherit; }
+    .auth-tab.active { background: var(--accent2); color: #fff; }
+    .auth-error { font-size: 0.85rem; text-align: center; min-height: 18px; }
 
     /* REBLOG QUOTE */
     .rb-quote { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 0.88rem; color: var(--muted); }
@@ -241,6 +256,52 @@
   </div>
 </div>
 
+<!-- AUTH SCREEN (sign up / log in) -->
+<div class="age-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">song<span>board</span></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabSignup">Sign Up</button>
+      <button class="auth-tab" id="tabLogin">Log In</button>
+    </div>
+
+    <!-- Sign up -->
+    <div id="signupSection">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input class="field" id="suDisplayName" type="text" placeholder="Display name" maxlength="30" autocomplete="name" />
+        <input class="field" id="suUsername" type="text" placeholder="Username (letters, numbers, _)" maxlength="20" autocomplete="username" />
+        <input class="field" id="suEmail" type="email" placeholder="Email address" autocomplete="email" />
+        <input class="field" id="suPassword" type="password" placeholder="Password (min 8 characters)" autocomplete="new-password" />
+        <div>
+          <div style="font-size:0.82rem;color:var(--muted);margin-bottom:8px">Pick a colour</div>
+          <div class="color-picker" id="authColorPicker"></div>
+        </div>
+        <button class="btn-primary" id="signupBtn">Create Account</button>
+      </div>
+    </div>
+
+    <!-- Log in -->
+    <div id="loginSection" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input class="field" id="liEmail" type="email" placeholder="Email address" autocomplete="email" />
+        <input class="field" id="liPassword" type="password" placeholder="Password" autocomplete="current-password" />
+        <button class="btn-primary" id="loginBtn">Log In</button>
+      </div>
+    </div>
+
+    <div id="authError" class="auth-error" style="color:var(--danger)"></div>
+    <div class="age-fine" style="text-align:center">By continuing you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>. 18+ only.</div>
+  </div>
+</div>
+
+<!-- SETUP BANNER (local / no-Supabase mode) -->
+<div id="setupBanner" style="display:none">
+  <div class="setup-banner">
+    Running in <strong style="color:var(--text)">offline mode</strong> — posts are saved to this browser only.
+    To enable real accounts and a shared feed, follow <a href="SETUP.md">SETUP.md</a> and add your Supabase credentials to index.html.
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="logo">song<span>board</span></div>
@@ -248,6 +309,7 @@
     <button class="nav-btn room-btn" id="openRoomBtn">🎧 Room</button>
     <button class="nav-btn primary" id="openCompose">+ New Post</button>
     <div class="avatar" id="navAvatar" title="Your profile"></div>
+    <button class="nav-btn ghost" id="logoutBtn" style="display:none">Log out</button>
   </div>
 </nav>
 
@@ -397,8 +459,27 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Supabase CDN — must be before the app script -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
 <script>
-// ── HELPERS ──────────────────────────────────────────────────────────────────
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// SUPABASE CONFIG — replace these two values after following SETUP.md
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+
+// ── INIT SUPABASE ─────────────────────────────────────────────────────────────
+let sb = null;
+let MODE = 'local'; // 'local' or 'supabase'
+try {
+  if (SUPABASE_URL !== 'YOUR_SUPABASE_URL' && typeof supabase !== 'undefined') {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    MODE = 'supabase';
+  }
+} catch(e) { console.warn('Supabase init failed, using local mode:', e.message); }
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
@@ -416,46 +497,29 @@ function mkAvEl(name, color, cls='') {
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2300);
+  setTimeout(()=>t.classList.remove('show'), 2500);
 }
 function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 function load(k, fb) { try { return JSON.parse(localStorage.getItem(k) ?? 'null') ?? fb; } catch(e){ return fb; } }
 
-// ── STATE ────────────────────────────────────────────────────────────────────
+// ── CONSTANTS & STATE ─────────────────────────────────────────────────────────
 const COLORS = ['#7c3aed','#db2777','#ea580c','#16a34a','#0284c7','#ca8a04','#dc2626','#0891b2'];
-let posts    = load('sb_posts', []);
-let profile  = load('sb_profile', null);
-let selSong  = null, roomSong = null, reblogPost = null, activeRoom = null, roomCh = null;
+let posts = [], profile = null, currentUser = null;
+let selSong = null, roomSong = null, reblogPost = null, activeRoom = null, roomCh = null;
+let selColor = COLORS[0], authSelColor = COLORS[0];
 
 function authorInfo() {
   return { authorName: profile?.displayName||'Anonymous', authorUsername: profile?.username||null, authorColor: profile?.color||'#444' };
 }
 
-// ── AGE GATE ─────────────────────────────────────────────────────────────────
+// ── AGE GATE (show immediately, no flash) ─────────────────────────────────────
 (function() {
-  const status = load('sb_age', null);
-  if (status === 'blocked') { document.getElementById('blockedScreen').classList.add('open'); return; }
-  if (status === 'verified') return;
-  document.getElementById('ageScreen').classList.add('open');
-  document.getElementById('ageBtn').onclick = function() {
-    const yr = parseInt(document.getElementById('birthYear').value, 10);
-    const now = new Date().getFullYear();
-    const inp = document.getElementById('birthYear');
-    if (!yr || yr < 1900 || yr > now) { inp.style.borderColor='var(--danger)'; return; }
-    inp.style.borderColor='';
-    if (now - yr < 18) {
-      store('sb_age','blocked');
-      document.getElementById('ageScreen').classList.remove('open');
-      document.getElementById('blockedScreen').classList.add('open');
-    } else {
-      store('sb_age','verified');
-      document.getElementById('ageScreen').classList.remove('open');
-    }
-  };
-  document.getElementById('birthYear').onkeydown = e => { if(e.key==='Enter') document.getElementById('ageBtn').click(); };
+  const s = load('sb_age', null);
+  if (s === 'blocked') document.getElementById('blockedScreen').classList.add('open');
+  else if (s !== 'verified') document.getElementById('ageScreen').classList.add('open');
 })();
 
-// ── ITUNES SEARCH ────────────────────────────────────────────────────────────
+// ── ITUNES SEARCH ─────────────────────────────────────────────────────────────
 async function searchSongs(q, resultsEl, spinnerEl, onPick) {
   if (!q.trim()) return;
   spinnerEl.classList.add('on');
@@ -495,20 +559,24 @@ async function searchSongs(q, resultsEl, spinnerEl, onPick) {
   }
 }
 
-// ── COMPOSE ──────────────────────────────────────────────────────────────────
+// ── COMPOSE ───────────────────────────────────────────────────────────────────
 const composeOverlay = document.getElementById('composeOverlay');
 document.getElementById('openCompose').onclick  = () => composeOverlay.classList.add('open');
 document.getElementById('closeCompose').onclick = closeCompose;
 composeOverlay.onclick = e => { if(e.target===composeOverlay) closeCompose(); };
 
-document.getElementById('searchBtn').onclick = () => searchSongs(document.getElementById('searchInput').value, document.getElementById('searchResults'), document.getElementById('searchSpinner'), song => {
-  selSong = song;
-  document.getElementById('selArt').src = song.art;
-  document.getElementById('selTrack').textContent = song.name;
-  document.getElementById('selArtist').textContent = song.artist;
-  document.getElementById('selSong').classList.add('open');
-  document.getElementById('postBtn').disabled = false;
-});
+document.getElementById('searchBtn').onclick = () => searchSongs(
+  document.getElementById('searchInput').value,
+  document.getElementById('searchResults'), document.getElementById('searchSpinner'),
+  song => {
+    selSong = song;
+    document.getElementById('selArt').src = song.art;
+    document.getElementById('selTrack').textContent = song.name;
+    document.getElementById('selArtist').textContent = song.artist;
+    document.getElementById('selSong').classList.add('open');
+    document.getElementById('postBtn').disabled = false;
+  }
+);
 document.getElementById('searchInput').onkeydown = e => { if(e.key==='Enter') document.getElementById('searchBtn').click(); };
 document.getElementById('clearSong').onclick = () => {
   selSong = null;
@@ -529,15 +597,36 @@ function closeCompose() {
   document.getElementById('postBtn').disabled = true;
 }
 
-document.getElementById('postBtn').onclick = () => {
+document.getElementById('postBtn').onclick = async () => {
   if (!selSong) return;
   const caption = document.getElementById('captionInput').value.trim();
-  const tags = document.getElementById('tagsInput').value.split(',').map(t=>t.trim()).filter(Boolean);
-  posts.unshift({ id:Date.now().toString(), type:'post', song:{...selSong}, caption, tags, likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
-  store('sb_posts', posts); renderFeed(); closeCompose(); toast('Posted!');
+  const tags    = document.getElementById('tagsInput').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const btn     = document.getElementById('postBtn');
+  btn.disabled  = true;
+
+  if (MODE === 'supabase') {
+    try {
+      const { data, error } = await sb.from('posts').insert({
+        user_id: currentUser.id, post_type: 'post',
+        song_name: selSong.name, song_artist: selSong.artist,
+        song_album: selSong.album, song_art: selSong.art,
+        song_embed_url: selSong.embedUrl, caption, tags
+      }).select('id, created_at').single();
+      if (error) throw error;
+      posts.unshift({ id:data.id, type:'post', song:{...selSong}, caption, tags,
+        ...authorInfo(), likes:0, liked:false, reblogs:0, comments:[], _commentCount:0,
+        createdAt: new Date(data.created_at).getTime() });
+      renderFeed(); closeCompose(); toast('Posted!');
+    } catch(e) { toast('Post failed: '+e.message); btn.disabled=false; return; }
+  } else {
+    posts.unshift({ id:Date.now().toString(), type:'post', song:{...selSong}, caption, tags,
+      likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
+    store('sb_posts', posts); renderFeed(); closeCompose(); toast('Posted!');
+  }
+  btn.disabled = false;
 };
 
-// ── REBLOG ───────────────────────────────────────────────────────────────────
+// ── REBLOG ────────────────────────────────────────────────────────────────────
 const reblogOverlay = document.getElementById('reblogOverlay');
 document.getElementById('closeReblog').onclick = () => reblogOverlay.classList.remove('open');
 reblogOverlay.onclick = e => { if(e.target===reblogOverlay) reblogOverlay.classList.remove('open'); };
@@ -549,25 +638,50 @@ function openReblog(post) {
   reblogOverlay.classList.add('open');
 }
 
-document.getElementById('doReblogBtn').onclick = () => {
+document.getElementById('doReblogBtn').onclick = async () => {
   if (!reblogPost) return;
   const comment = document.getElementById('rbComment').value.trim();
-  posts.unshift({ id:Date.now().toString(), type:'reblog', song:{...reblogPost.song}, originalAuthorName:reblogPost.authorName, originalAuthorColor:reblogPost.authorColor, originalPostId:reblogPost.id, caption:comment, tags:[], likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
-  const orig = posts.find(p=>p.id===reblogPost.id);
-  if (orig) { orig.reblogs=(orig.reblogs||0)+1; }
-  store('sb_posts', posts); renderFeed(); reblogOverlay.classList.remove('open'); toast('Reblogged!');
+  document.getElementById('doReblogBtn').disabled = true;
+
+  if (MODE === 'supabase') {
+    try {
+      const { data, error } = await sb.from('posts').insert({
+        user_id: currentUser.id, post_type: 'reblog',
+        song_name: reblogPost.song.name, song_artist: reblogPost.song.artist,
+        song_album: reblogPost.song.album, song_art: reblogPost.song.art,
+        song_embed_url: reblogPost.song.embedUrl, caption: comment, tags: [],
+        original_post_id: reblogPost.id,
+        original_author_name: reblogPost.authorName,
+        original_author_color: reblogPost.authorColor
+      }).select('id, created_at').single();
+      if (error) throw error;
+      posts.unshift({ id:data.id, type:'reblog', song:{...reblogPost.song}, caption:comment, tags:[],
+        ...authorInfo(), originalAuthorName:reblogPost.authorName, originalAuthorColor:reblogPost.authorColor,
+        likes:0, liked:false, reblogs:0, comments:[], _commentCount:0,
+        createdAt: new Date(data.created_at).getTime() });
+    } catch(e) { toast('Reblog failed: '+e.message); document.getElementById('doReblogBtn').disabled=false; return; }
+  } else {
+    posts.unshift({ id:Date.now().toString(), type:'reblog', song:{...reblogPost.song},
+      originalAuthorName:reblogPost.authorName, originalAuthorColor:reblogPost.authorColor,
+      originalPostId:reblogPost.id, caption:comment, tags:[],
+      likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), ...authorInfo() });
+    const orig = posts.find(p=>p.id===reblogPost.id);
+    if (orig) orig.reblogs = (orig.reblogs||0)+1;
+    store('sb_posts', posts);
+  }
+  renderFeed(); reblogOverlay.classList.remove('open'); toast('Reblogged!');
+  document.getElementById('doReblogBtn').disabled = false;
 };
 
 // ── PROFILE ───────────────────────────────────────────────────────────────────
 const profileSetupOverlay = document.getElementById('profileSetupOverlay');
-const profileOverlay = document.getElementById('profileOverlay');
-let selColor = COLORS[0];
+const profileOverlay      = document.getElementById('profileOverlay');
 
 COLORS.forEach((c,i) => {
   const sw = document.createElement('div');
   sw.className = 'swatch'+(i===0?' on':'');
   sw.style.background = c;
-  sw.onclick = () => { document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('on')); sw.classList.add('on'); selColor=c; };
+  sw.onclick = () => { document.querySelectorAll('#colorPicker .swatch').forEach(s=>s.classList.remove('on')); sw.classList.add('on'); selColor=c; };
   document.getElementById('colorPicker').appendChild(sw);
 });
 
@@ -578,18 +692,29 @@ function openProfileSetup(editing=false) {
     document.getElementById('profileUsername').value    = profile.username;
     document.getElementById('profileBio').value         = profile.bio||'';
     selColor = profile.color;
-    document.querySelectorAll('.swatch').forEach(sw => sw.classList.toggle('on', sw.style.background===profile.color));
+    document.querySelectorAll('#colorPicker .swatch').forEach(sw => sw.classList.toggle('on', sw.style.background===profile.color));
   }
   profileSetupOverlay.classList.add('open');
 }
 
-document.getElementById('saveProfileBtn').onclick = () => {
+document.getElementById('saveProfileBtn').onclick = async () => {
   const displayName = document.getElementById('profileDisplayName').value.trim().slice(0,30);
   const username    = document.getElementById('profileUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,20);
   const bio         = document.getElementById('profileBio').value.trim().slice(0,150);
   if (!displayName||!username) { toast('Name and username are required.'); return; }
-  profile = { displayName, username, bio, color:selColor };
-  store('sb_profile', profile);
+
+  if (MODE === 'supabase') {
+    const { error } = await sb.from('profiles').upsert({
+      id: currentUser.id, display_name: displayName, username, bio, avatar_color: selColor
+    });
+    if (error) {
+      toast(error.code==='23505' ? 'Username already taken. Try another.' : 'Save failed: '+error.message);
+      return;
+    }
+  }
+
+  profile = { displayName, username, bio, color: selColor };
+  if (MODE === 'local') store('sb_profile', profile);
   profileSetupOverlay.classList.remove('open');
   renderNavAvatar(); toast('Profile saved!');
 };
@@ -628,14 +753,18 @@ document.getElementById('openRoomBtn').onclick    = () => roomSetupOverlay.class
 document.getElementById('closeRoomSetup').onclick = () => roomSetupOverlay.classList.remove('open');
 roomSetupOverlay.onclick = e => { if(e.target===roomSetupOverlay) roomSetupOverlay.classList.remove('open'); };
 
-document.getElementById('roomSearchBtn').onclick = () => searchSongs(document.getElementById('roomSearch').value, document.getElementById('roomResults'), document.getElementById('roomSpinner'), song => {
-  roomSong = song;
-  document.getElementById('roomSelArt').src = song.art;
-  document.getElementById('roomSelTrack').textContent  = song.name;
-  document.getElementById('roomSelArtist').textContent = song.artist;
-  document.getElementById('roomSelSong').classList.add('open');
-  document.getElementById('startRoomBtn').disabled = false;
-});
+document.getElementById('roomSearchBtn').onclick = () => searchSongs(
+  document.getElementById('roomSearch').value,
+  document.getElementById('roomResults'), document.getElementById('roomSpinner'),
+  song => {
+    roomSong = song;
+    document.getElementById('roomSelArt').src = song.art;
+    document.getElementById('roomSelTrack').textContent  = song.name;
+    document.getElementById('roomSelArtist').textContent = song.artist;
+    document.getElementById('roomSelSong').classList.add('open');
+    document.getElementById('startRoomBtn').disabled = false;
+  }
+);
 document.getElementById('roomSearch').onkeydown = e => { if(e.key==='Enter') document.getElementById('roomSearchBtn').click(); };
 document.getElementById('clearRoomSong').onclick = () => {
   roomSong = null;
@@ -646,14 +775,34 @@ document.getElementById('clearRoomSong').onclick = () => {
   document.getElementById('startRoomBtn').disabled=true;
 };
 
-document.getElementById('startRoomBtn').onclick = () => {
+document.getElementById('startRoomBtn').onclick = async () => {
   if (!roomSong) return;
   const name = document.getElementById('roomName').value.trim()||'Listening Room';
   activeRoom = { id:'room_'+Date.now(), name, song:{...roomSong}, host:profile?.username||'Anonymous', messages:[], createdAt:Date.now() };
   roomSetupOverlay.classList.remove('open');
   openRoom(activeRoom, true);
-  posts.unshift({ id:Date.now().toString(), type:'room', roomId:activeRoom.id, roomName:name, song:{...roomSong}, likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), caption:'', tags:[], ...authorInfo() });
-  store('sb_posts', posts); renderFeed();
+
+  if (MODE === 'supabase') {
+    try {
+      const { data, error } = await sb.from('posts').insert({
+        user_id: currentUser.id, post_type: 'room',
+        song_name: roomSong.name, song_artist: roomSong.artist,
+        song_album: roomSong.album, song_art: roomSong.art,
+        song_embed_url: roomSong.embedUrl, caption: '', tags: [],
+        room_id: activeRoom.id, room_name: name
+      }).select('id, created_at').single();
+      if (!error) {
+        posts.unshift({ id:data.id, type:'room', roomId:activeRoom.id, roomName:name, song:{...roomSong},
+          ...authorInfo(), likes:0, liked:false, reblogs:0, comments:[], _commentCount:0,
+          createdAt: new Date(data.created_at).getTime() });
+        renderFeed();
+      }
+    } catch(e) { console.warn('Room post failed:', e.message); }
+  } else {
+    posts.unshift({ id:Date.now().toString(), type:'room', roomId:activeRoom.id, roomName:name, song:{...roomSong},
+      likes:0, liked:false, reblogs:0, comments:[], createdAt:Date.now(), caption:'', tags:[], ...authorInfo() });
+    store('sb_posts', posts); renderFeed();
+  }
 };
 
 document.getElementById('leaveRoomBtn').onclick = () => {
@@ -698,7 +847,7 @@ function sendChatMsg() {
 document.getElementById('chatSendBtn').onclick = sendChatMsg;
 document.getElementById('chatInput').onkeydown = e => { if(e.key==='Enter') sendChatMsg(); };
 
-// ── SAFETY REPORT ────────────────────────────────────────────────────────────
+// ── SAFETY REPORT ─────────────────────────────────────────────────────────────
 const safetyOverlay = document.getElementById('safetyOverlay');
 document.getElementById('openSafetyReport').onclick = e => { e.preventDefault(); safetyOverlay.classList.add('open'); };
 document.getElementById('closeSafety').onclick = () => safetyOverlay.classList.remove('open');
@@ -708,13 +857,13 @@ document.getElementById('submitReportBtn').onclick = () => {
   const desc  = document.getElementById('reportDesc').value.trim();
   if (!type) { toast('Please select an issue type.'); return; }
   if (!desc)  { toast('Please describe the issue.'); return; }
-  toast('Report noted. Email runawaylover228@gmail.com for urgent issues.');
+  toast('Report submitted. For urgent issues email runawaylover228@gmail.com');
   safetyOverlay.classList.remove('open');
   document.getElementById('reportType').value='';
   document.getElementById('reportDesc').value='';
 };
 
-// ── FEED ─────────────────────────────────────────────────────────────────────
+// ── FEED ──────────────────────────────────────────────────────────────────────
 function renderFeed() {
   const feed = document.getElementById('feed');
   if (!posts.length) { feed.innerHTML='<div class="empty"><strong>Nothing here yet.</strong>Hit <em>+ New Post</em> to share the first song.</div>'; return; }
@@ -737,6 +886,8 @@ function buildPost(post) {
   const body = (post.caption||post.tags?.length)
     ? `<div class="post-body">${post.caption?`<div class="post-caption">${esc(post.caption)}</div>`:''} ${post.tags?.length?`<div class="post-tags">${post.tags.map(t=>`<span class="tag">#${esc(t)}</span>`).join('')}</div>`:''}</div>` : '';
 
+  const commentCount = post._commentCount !== undefined ? post._commentCount : post.comments.length;
+
   el.innerHTML=`
     <button class="del-post">🗑</button>
     ${header}
@@ -746,7 +897,7 @@ function buildPost(post) {
       <span class="post-time">${timeAgo(post.createdAt)}</span>
       <button class="act like-btn${post.liked?' liked':''}"><span>${post.liked?'♥':'♡'}</span><span class="lc">${post.likes}</span></button>
       <button class="act rb-btn"><span>↻</span><span class="rc">${post.reblogs||0}</span></button>
-      <button class="act cmt-toggle"><span>💬</span><span class="cc">${post.comments.length}</span></button>
+      <button class="act cmt-toggle"><span>💬</span><span class="cc">${commentCount}</span></button>
     </div>
     <div class="comments">
       <div class="cmt-list"></div>
@@ -758,59 +909,294 @@ function buildPost(post) {
   const joinBtn = el.querySelector('.join-btn');
   if (joinBtn) joinBtn.onclick = () => { if(!activeRoom){toast('No active room yet.');return;} openRoom(activeRoom,false); };
 
-  el.querySelector('.del-post').onclick = () => {
-    if(!confirm('Delete this post?')) return;
-    posts=posts.filter(p=>p.id!==post.id); store('sb_posts',posts); el.remove();
-    if(!posts.length) renderFeed();
+  el.querySelector('.del-post').onclick = async () => {
+    const p = posts.find(x=>x.id===post.id);
+    if (!p) return;
+    if (MODE==='supabase' && p.authorUsername !== profile?.username) { toast('You can only delete your own posts.'); return; }
+    if (!confirm('Delete this post?')) return;
+    if (MODE==='supabase') {
+      const { error } = await sb.from('posts').delete().eq('id', post.id);
+      if (error) { toast('Delete failed.'); return; }
+    }
+    posts = posts.filter(x=>x.id!==post.id);
+    if (MODE==='local') store('sb_posts', posts);
+    el.remove();
+    if (!posts.length) renderFeed();
   };
 
-  el.querySelector('.like-btn').onclick = () => {
-    const p=posts.find(x=>x.id===post.id); if(!p) return;
-    p.liked=!p.liked; p.likes+=p.liked?1:-1; store('sb_posts',posts);
-    const btn=el.querySelector('.like-btn');
-    btn.classList.toggle('liked',p.liked);
-    btn.querySelector('span').textContent=p.liked?'♥':'♡';
-    btn.querySelector('.lc').textContent=p.likes;
+  el.querySelector('.like-btn').onclick = async () => {
+    const p = posts.find(x=>x.id===post.id);
+    if (!p) return;
+    if (MODE==='supabase') {
+      try {
+        if (p.liked) {
+          await sb.from('likes').delete().eq('user_id', currentUser.id).eq('post_id', p.id);
+        } else {
+          await sb.from('likes').insert({ user_id: currentUser.id, post_id: p.id });
+        }
+      } catch(e) { toast('Like failed.'); return; }
+    }
+    p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
+    if (MODE==='local') store('sb_posts', posts);
+    const btn = el.querySelector('.like-btn');
+    btn.classList.toggle('liked', p.liked);
+    btn.querySelector('span').textContent = p.liked ? '♥' : '♡';
+    btn.querySelector('.lc').textContent  = p.likes;
   };
 
   el.querySelector('.rb-btn').onclick = () => openReblog(posts.find(x=>x.id===post.id)||post);
 
-  const section=el.querySelector('.comments');
-  el.querySelector('.cmt-toggle').onclick = () => section.classList.toggle('open');
-
-  const cinput=el.querySelector('.cmt-form input');
-  const addCmt=()=>{
-    const text=cinput.value.trim(); if(!text) return;
-    const p=posts.find(x=>x.id===post.id); if(!p) return;
-    p.comments.push({id:Date.now().toString(),text,createdAt:Date.now(),...authorInfo()});
-    store('sb_posts',posts); cinput.value='';
-    el.querySelector('.cc').textContent=p.comments.length;
-    renderComments(el,p); section.classList.add('open');
+  const section = el.querySelector('.comments');
+  let cmtsLoaded = false;
+  el.querySelector('.cmt-toggle').onclick = async () => {
+    const open = section.classList.toggle('open');
+    if (open && MODE==='supabase' && !cmtsLoaded) {
+      cmtsLoaded = true;
+      const { data } = await sb.from('comments').select('*').eq('post_id', post.id).order('created_at', {ascending:true});
+      if (data) {
+        const p = posts.find(x=>x.id===post.id);
+        if (p) {
+          p.comments = data.map(c=>({ id:c.id, text:c.body, authorName:c.author_name, authorColor:c.author_color, createdAt:new Date(c.created_at).getTime() }));
+          el.querySelector('.cc').textContent = p.comments.length;
+          renderComments(el, p);
+        }
+      }
+    }
   };
-  el.querySelector('.cmt-form button').onclick=addCmt;
-  cinput.onkeydown=e=>{if(e.key==='Enter')addCmt();};
+
+  const cinput = el.querySelector('.cmt-form input');
+  const addCmt = async () => {
+    const text = cinput.value.trim(); if (!text) return;
+    const p = posts.find(x=>x.id===post.id); if (!p) return;
+    if (MODE==='supabase') {
+      const { data, error } = await sb.from('comments').insert({
+        post_id: p.id, user_id: currentUser.id,
+        author_name: profile?.displayName||'Anonymous', author_color: profile?.color||'#444',
+        body: text
+      }).select().single();
+      if (error) { toast('Comment failed.'); return; }
+      p.comments.push({ id:data.id, text:data.body, authorName:data.author_name, authorColor:data.author_color, createdAt:Date.now() });
+    } else {
+      p.comments.push({ id:Date.now().toString(), text, createdAt:Date.now(), ...authorInfo() });
+      store('sb_posts', posts);
+    }
+    cinput.value='';
+    el.querySelector('.cc').textContent = p.comments.length;
+    renderComments(el, p); section.classList.add('open');
+  };
+  el.querySelector('.cmt-form button').onclick = addCmt;
+  cinput.onkeydown = e => { if(e.key==='Enter') addCmt(); };
   return el;
 }
 
 function renderComments(postEl, post) {
-  const list=postEl.querySelector('.cmt-list'); list.innerHTML='';
+  const list = postEl.querySelector('.cmt-list'); list.innerHTML='';
   post.comments.forEach(c=>{
-    const d=document.createElement('div'); d.className='cmt';
+    const d = document.createElement('div'); d.className='cmt';
     d.innerHTML=`<div class="cmt-author">${mkAvEl(c.authorName,c.authorColor,'small')}<span class="cn">${esc(c.authorName||'Anonymous')}</span>${c.authorUsername?`<span class="ch">@${esc(c.authorUsername)}</span>`:''}</div><div class="cmt-text">${esc(c.text)}</div><button class="del-cmt">✕</button>`;
-    d.querySelector('.del-cmt').onclick=()=>{
-      const p=posts.find(x=>x.id===post.id); if(!p) return;
-      p.comments=p.comments.filter(x=>x.id!==c.id); store('sb_posts',posts);
-      postEl.querySelector('.cc').textContent=p.comments.length;
-      renderComments(postEl,p);
+    d.querySelector('.del-cmt').onclick = async () => {
+      const p = posts.find(x=>x.id===post.id); if (!p) return;
+      if (MODE==='supabase') {
+        const { error } = await sb.from('comments').delete().eq('id', c.id);
+        if (error) { toast('Delete failed.'); return; }
+      }
+      p.comments = p.comments.filter(x=>x.id!==c.id);
+      if (MODE==='local') store('sb_posts', posts);
+      postEl.querySelector('.cc').textContent = p.comments.length;
+      renderComments(postEl, p);
     };
     list.appendChild(d);
   });
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
-renderNavAvatar();
-if (!profile) openProfileSetup(false);
-renderFeed();
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+// Auth color picker
+COLORS.forEach((c,i) => {
+  const sw = document.createElement('div');
+  sw.className = 'swatch'+(i===0?' on':'');
+  sw.style.background = c;
+  sw.onclick = () => {
+    document.querySelectorAll('#authColorPicker .swatch').forEach(s=>s.classList.remove('on'));
+    sw.classList.add('on'); authSelColor = c;
+  };
+  document.getElementById('authColorPicker').appendChild(sw);
+});
+
+// Tab switcher
+document.getElementById('tabSignup').onclick = () => switchAuthTab('signup');
+document.getElementById('tabLogin').onclick  = () => switchAuthTab('login');
+function switchAuthTab(tab) {
+  document.getElementById('signupSection').style.display = tab==='signup' ? '' : 'none';
+  document.getElementById('loginSection').style.display  = tab==='login'  ? '' : 'none';
+  document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
+  document.getElementById('tabLogin').classList.toggle('active',  tab==='login');
+  const e = document.getElementById('authError');
+  e.textContent=''; e.style.color='var(--danger)';
+}
+
+function setAuthError(msg, isSuccess=false) {
+  const e = document.getElementById('authError');
+  e.style.color = isSuccess ? 'var(--green)' : 'var(--danger)';
+  e.textContent = msg;
+}
+
+document.getElementById('signupBtn').onclick = async () => {
+  const displayName = document.getElementById('suDisplayName').value.trim();
+  const username    = document.getElementById('suUsername').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  const email       = document.getElementById('suEmail').value.trim();
+  const password    = document.getElementById('suPassword').value;
+  setAuthError('');
+  if (!displayName||!username||!email||!password) { setAuthError('All fields are required.'); return; }
+  if (username.length < 2) { setAuthError('Username must be at least 2 characters.'); return; }
+  if (password.length < 8) { setAuthError('Password must be at least 8 characters.'); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled=true; btn.textContent='Creating account…';
+  try {
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if (error) throw error;
+    const { error: profErr } = await sb.from('profiles').insert({
+      id: data.user.id, display_name: displayName,
+      username, bio: '', avatar_color: authSelColor
+    });
+    if (profErr) {
+      setAuthError(profErr.code==='23505' ? 'Username already taken. Try another.' : profErr.message);
+    } else if (!data.session) {
+      setAuthError('✓ Check your email for a confirmation link, then log in.', true);
+      switchAuthTab('login');
+    }
+    // If data.session exists, onAuthStateChange handles the rest
+  } catch(e) { setAuthError(e.message); }
+  btn.disabled=false; btn.textContent='Create Account';
+};
+
+document.getElementById('loginBtn').onclick = async () => {
+  const email    = document.getElementById('liEmail').value.trim();
+  const password = document.getElementById('liPassword').value;
+  setAuthError('');
+  if (!email||!password) { setAuthError('Email and password are required.'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled=true; btn.textContent='Logging in…';
+  try {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    // onAuthStateChange handles showing the app
+  } catch(e) { setAuthError(e.message); }
+  btn.disabled=false; btn.textContent='Log In';
+};
+
+document.getElementById('logoutBtn').onclick = async () => {
+  if (MODE==='supabase') await sb.auth.signOut();
+};
+
+// ── SUPABASE DATA LOAD ────────────────────────────────────────────────────────
+async function loadUserData() {
+  const { data: prof } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+  if (prof) {
+    profile = { displayName: prof.display_name, username: prof.username, bio: prof.bio||'', color: prof.avatar_color };
+  }
+  renderNavAvatar();
+  document.getElementById('logoutBtn').style.display = '';
+  await loadPostsFromSupabase();
+}
+
+async function loadPostsFromSupabase() {
+  const { data, error } = await sb
+    .from('posts')
+    .select('*, profiles(username, display_name, avatar_color)')
+    .order('created_at', { ascending: false })
+    .limit(50);
+  if (error) { console.error('Failed to load posts:', error); renderFeed(); return; }
+
+  const ids = data.map(p=>p.id);
+  let likeRows=[], cmtRows=[];
+  if (ids.length) {
+    [{ data: likeRows }, { data: cmtRows }] = await Promise.all([
+      sb.from('likes').select('post_id, user_id').in('post_id', ids),
+      sb.from('comments').select('post_id').in('post_id', ids)
+    ]);
+    likeRows = likeRows||[]; cmtRows = cmtRows||[];
+  }
+  const likeCounts={}, userLiked=new Set(), cmtCounts={};
+  likeRows.forEach(l=>{ likeCounts[l.post_id]=(likeCounts[l.post_id]||0)+1; if(l.user_id===currentUser.id) userLiked.add(l.post_id); });
+  cmtRows.forEach(c=>{ cmtCounts[c.post_id]=(cmtCounts[c.post_id]||0)+1; });
+
+  posts = data.map(p => ({
+    id: p.id, type: p.post_type,
+    song: { name: p.song_name, artist: p.song_artist, album: p.song_album, art: p.song_art, embedUrl: p.song_embed_url },
+    caption: p.caption||'', tags: p.tags||[],
+    authorName: p.profiles?.display_name||'Anonymous',
+    authorUsername: p.profiles?.username||null,
+    authorColor: p.profiles?.avatar_color||'#7c3aed',
+    originalAuthorName: p.original_author_name,
+    originalAuthorColor: p.original_author_color,
+    roomName: p.room_name, roomId: p.room_id,
+    likes: likeCounts[p.id]||0, liked: userLiked.has(p.id),
+    reblogs: 0, comments: [], _commentCount: cmtCounts[p.id]||0,
+    createdAt: new Date(p.created_at).getTime()
+  }));
+  renderFeed();
+}
+
+// ── AUTH STATE & INIT ─────────────────────────────────────────────────────────
+function checkAuthState() {
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+      currentUser = session.user;
+      loadUserData();
+    } else {
+      document.getElementById('authScreen').classList.add('open');
+    }
+  });
+
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event==='SIGNED_IN' && session) {
+      currentUser = session.user;
+      document.getElementById('authScreen').classList.remove('open');
+      loadUserData();
+    } else if (event==='SIGNED_OUT') {
+      currentUser = null; profile = null; posts = [];
+      renderNavAvatar(); renderFeed();
+      document.getElementById('logoutBtn').style.display = 'none';
+      document.getElementById('authScreen').classList.add('open');
+    }
+  });
+}
+
+function initAfterAge() {
+  if (MODE === 'supabase') {
+    checkAuthState();
+  } else {
+    document.getElementById('setupBanner').style.display = '';
+    profile = load('sb_profile', null);
+    posts   = load('sb_posts', []);
+    renderNavAvatar();
+    if (!profile) openProfileSetup(false);
+    renderFeed();
+  }
+}
+
+// ── AGE GATE EVENT HANDLERS ───────────────────────────────────────────────────
+document.getElementById('ageBtn').onclick = function() {
+  const yr  = parseInt(document.getElementById('birthYear').value, 10);
+  const now = new Date().getFullYear();
+  const inp = document.getElementById('birthYear');
+  if (!yr || yr < 1900 || yr > now) { inp.style.borderColor='var(--danger)'; return; }
+  inp.style.borderColor='';
+  if (now - yr < 18) {
+    store('sb_age','blocked');
+    document.getElementById('ageScreen').classList.remove('open');
+    document.getElementById('blockedScreen').classList.add('open');
+  } else {
+    store('sb_age','verified');
+    document.getElementById('ageScreen').classList.remove('open');
+    initAfterAge();
+  }
+};
+document.getElementById('birthYear').onkeydown = e => { if(e.key==='Enter') document.getElementById('ageBtn').click(); };
+
+// ── START ─────────────────────────────────────────────────────────────────────
+if (load('sb_age', null) === 'verified') initAfterAge();
 </script>
 </body>
 </html>
