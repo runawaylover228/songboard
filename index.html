@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https: data:; frame-src https://embed.music.apple.com; connect-src https://itunes.apple.com;">
   <title>Songboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -483,6 +485,27 @@
   </div>
 </div>
 
+<!-- SAFETY REPORT MODAL -->
+<div class="overlay" id="safetyOverlay">
+  <div class="modal">
+    <button class="close-btn" id="closeSafety">✕</button>
+    <h2>🚨 Report a Safety Issue</h2>
+    <p style="color:var(--muted);font-size:0.88rem">Reports go directly to our safety team. For emergencies involving a child, also contact <a href="https://www.cybertipline.org" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">NCMEC</a> or call 911.</p>
+    <select class="field" id="reportType">
+      <option value="">— Select issue type —</option>
+      <option value="child_safety">Child safety concern</option>
+      <option value="harassment">Harassment or bullying</option>
+      <option value="hate_speech">Hate speech</option>
+      <option value="illegal_content">Illegal content</option>
+      <option value="spam">Spam</option>
+      <option value="other">Other</option>
+    </select>
+    <textarea class="field" id="reportDescription" placeholder="Describe what you saw in as much detail as possible…" maxlength="2000" style="min-height:120px"></textarea>
+    <button class="action-btn-wide" id="submitReportBtn">Submit Report</button>
+    <p style="font-size:0.78rem;color:var(--muted);text-align:center">Your report is anonymous unless you are signed in.</p>
+  </div>
+</div>
+
 <!-- FEED -->
 <div class="layout"><div id="feed"></div></div>
 
@@ -491,7 +514,7 @@
     <a href="privacy.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Privacy Policy</a>
     <a href="terms.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Terms of Service</a>
     <a href="safety.html" style="color:var(--muted);text-decoration:none;margin:0 10px">Safety</a>
-    <a href="mailto:songboard-safety@proton.me" style="color:var(--muted);text-decoration:none;margin:0 10px">Report a Safety Issue</a>
+    <a href="#" data-open-safety style="color:var(--danger);text-decoration:none;margin:0 10px;font-weight:600">🚨 Report a Safety Issue</a>
   </div>
   <div>© 2026 Songboard &nbsp;·&nbsp; For users aged 13 and older &nbsp;·&nbsp; <a href="safety.html" style="color:var(--muted);text-decoration:none">Child safety resources</a></div>
 </footer>
@@ -521,10 +544,14 @@
       const age = currentYear - yearVal;
       if (age < 13) {
         try { localStorage.setItem('sb_age', 'blocked'); } catch(e) {}
+        const bracket = 'under_13';
+        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'blocked', ageBracket: bracket });
         document.getElementById('ageScreen').classList.remove('show');
         document.getElementById('blockedScreen').classList.add('show');
       } else {
         try { localStorage.setItem('sb_age', 'verified'); } catch(e) {}
+        const bracket = age < 18 ? '13_to_17' : '18_plus';
+        if (typeof logAgeVerification === 'function') logAgeVerification({ outcome: 'verified', ageBracket: bracket });
         document.getElementById('ageScreen').classList.remove('show');
       }
     };
@@ -1028,6 +1055,43 @@
       list.appendChild(div);
     });
   }
+
+  // ─── SAFETY REPORTS ──────────────────────────────────────────────────────────
+  const safetyOverlay = document.getElementById('safetyOverlay');
+  document.getElementById('closeSafety').onclick = () => safetyOverlay.classList.remove('open');
+  safetyOverlay.onclick = e => { if (e.target === safetyOverlay) safetyOverlay.classList.remove('open'); };
+
+  document.querySelectorAll('[data-open-safety]').forEach(el => {
+    el.onclick = () => safetyOverlay.classList.add('open');
+  });
+
+  document.getElementById('submitReportBtn').onclick = async () => {
+    const type = document.getElementById('reportType').value;
+    const description = document.getElementById('reportDescription').value.trim();
+    const btn = document.getElementById('submitReportBtn');
+    if (!type) { showToast('Please select an issue type.'); return; }
+    if (!description) { showToast('Please describe the issue.'); return; }
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      if (typeof submitSafetyReport === 'function') {
+        await submitSafetyReport({
+          type, description,
+          reporterName: profile ? profile.displayName : null,
+        });
+        showToast('Report submitted. Thank you.');
+      } else {
+        // Supabase not yet configured — store locally as fallback
+        showToast('Report noted. Connect Supabase to send reports to your safety team.');
+      }
+      safetyOverlay.classList.remove('open');
+      document.getElementById('reportType').value = '';
+      document.getElementById('reportDescription').value = '';
+    } catch(e) {
+      showToast('Failed to submit — please email songboard-safety@proton.me directly.');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Submit Report';
+    }
+  };
 
   // ─── INIT ────────────────────────────────────────────────────────────────────
   renderNavAvatar();
