@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Songboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e12;
+      --surface: #1a1a22;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --accent: #a78bfa;
+      --accent2: #7c3aed;
+      --text: #e2e2f0;
+      --muted: #888899;
+      --danger: #f87171;
+      --green: #4ade80;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(14,14,18,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 60px;
+    }
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+    .logo span { color: var(--text); }
+    nav button {
+      background: var(--accent2); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 8px 18px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    nav button:hover { background: var(--accent); }
+
+    /* LAYOUT */
+    .layout {
+      max-width: 680px; margin: 0 auto;
+      padding: 32px 16px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    /* COMPOSE MODAL */
+    .overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: min(560px, 95vw);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .modal h2 { font-size: 1.15rem; font-weight: 700; }
+    .modal .close-btn {
+      position: absolute; top: 12px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+    }
+    .modal { position: relative; }
+
+    /* SEARCH */
+    .search-row { display: flex; gap: 8px; }
+    .search-row input {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 10px 14px;
+      font-size: 0.95rem; outline: none;
+    }
+    .search-row input:focus { border-color: var(--accent); }
+    .search-row button {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--accent); border-radius: 8px; padding: 10px 16px;
+      cursor: pointer; font-weight: 600; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .search-row button:hover { background: var(--border); }
+
+    .search-results {
+      max-height: 220px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 8px;
+      display: none; flex-direction: column;
+    }
+    .search-results.visible { display: flex; }
+    .result-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; cursor: pointer;
+      transition: background 0.12s;
+    }
+    .result-item:hover { background: var(--surface2); }
+    .result-item.selected { background: rgba(167,139,250,0.12); border-left: 3px solid var(--accent); }
+    .result-item img { width: 44px; height: 44px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+    .result-info { overflow: hidden; }
+    .result-info .track { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-info .artist { color: var(--muted); font-size: 0.8rem; }
+
+    /* SELECTED SONG PREVIEW */
+    .selected-song {
+      display: none; align-items: center; gap: 12px;
+      background: var(--surface2); border-radius: 10px; padding: 12px;
+      border: 1px solid var(--accent);
+    }
+    .selected-song.visible { display: flex; }
+    .selected-song img { width: 52px; height: 52px; border-radius: 8px; }
+    .selected-song .info { flex: 1; overflow: hidden; }
+    .selected-song .track { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .selected-song .artist { color: var(--muted); font-size: 0.85rem; }
+    .selected-song .clear { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
+
+    textarea {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 12px 14px;
+      font-size: 0.95rem; resize: vertical; min-height: 90px;
+      outline: none; font-family: inherit; width: 100%;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--muted); }
+
+    .tags-input {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 10px 14px;
+      font-size: 0.9rem; outline: none; width: 100%;
+    }
+    .tags-input:focus { border-color: var(--accent); }
+    .tags-input::placeholder { color: var(--muted); }
+
+    .post-btn {
+      background: var(--accent2); color: #fff; border: none;
+      border-radius: 8px; padding: 11px; font-size: 0.95rem;
+      font-weight: 700; cursor: pointer; transition: background 0.15s;
+    }
+    .post-btn:hover { background: var(--accent); }
+    .post-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* FEED */
+    .empty-state {
+      text-align: center; color: var(--muted);
+      padding: 64px 0; font-size: 1rem; line-height: 1.8;
+    }
+    .empty-state strong { color: var(--text); display: block; font-size: 1.2rem; margin-bottom: 8px; }
+
+    /* POST CARD */
+    .post {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+
+    /* APPLE MUSIC EMBED */
+    .am-embed {
+      padding: 14px 14px 0;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .am-embed iframe {
+      width: 100%; border-radius: 10px; display: block;
+      border: none;
+    }
+
+    /* POST BODY */
+    .post-body { padding: 16px; }
+    .post-caption { font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .post-tags { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 0.8rem; color: var(--accent); background: rgba(167,139,250,0.1);
+      border-radius: 20px; padding: 3px 10px; cursor: pointer;
+    }
+    .tag:hover { background: rgba(167,139,250,0.2); }
+
+    /* POST FOOTER */
+    .post-footer {
+      display: flex; align-items: center; gap: 4px;
+      padding: 10px 16px; border-top: 1px solid var(--border);
+    }
+    .post-time { color: var(--muted); font-size: 0.78rem; margin-right: auto; }
+    .action-btn {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 0.85rem; padding: 6px 10px;
+      border-radius: 6px; display: flex; align-items: center; gap: 5px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .action-btn:hover { color: var(--text); background: var(--surface2); }
+    .action-btn.liked { color: var(--danger); }
+    .action-btn.liked:hover { color: var(--danger); }
+    .action-btn .icon { font-size: 1rem; }
+
+    /* COMMENTS */
+    .comments-section { border-top: 1px solid var(--border); display: none; }
+    .comments-section.open { display: block; }
+    .comment-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .comment {
+      background: var(--surface2); border-radius: 8px; padding: 10px 12px;
+      font-size: 0.88rem; line-height: 1.5; position: relative;
+    }
+    .comment .comment-author { font-weight: 700; color: var(--accent); font-size: 0.82rem; margin-bottom: 3px; }
+    .comment .comment-text { white-space: pre-wrap; word-break: break-word; }
+    .comment .delete-comment {
+      position: absolute; top: 8px; right: 8px;
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 0.9rem; opacity: 0; transition: opacity 0.15s;
+    }
+    .comment:hover .delete-comment { opacity: 1; }
+    .comment-form { padding: 0 16px 12px; display: flex; gap: 8px; }
+    .comment-form input {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 8px 12px;
+      font-size: 0.88rem; outline: none;
+    }
+    .comment-form input:focus { border-color: var(--accent); }
+    .comment-form button {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--accent); border-radius: 8px; padding: 8px 12px;
+      cursor: pointer; font-weight: 600; font-size: 0.85rem;
+    }
+    .comment-form button:hover { background: var(--border); }
+
+    /* DELETE POST */
+    .delete-post {
+      position: absolute; top: 10px; right: 10px;
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 1rem; opacity: 0; transition: opacity 0.15s;
+      z-index: 2;
+    }
+    .post:hover .delete-post { opacity: 1; }
+    .post { position: relative; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* LOADING SPINNER */
+    .spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    .spinner.visible { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 20px; font-size: 0.9rem;
+      transition: transform 0.3s; z-index: 999; pointer-events: none;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">song<span>board</span></div>
+  <button id="openCompose">+ New Post</button>
+</nav>
+
+<!-- COMPOSE MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close-btn" id="closeModal">✕</button>
+    <h2>Post a Song</h2>
+
+    <div class="search-row">
+      <input id="searchInput" type="text" placeholder="Search for a song..." autocomplete="off" />
+      <button id="searchBtn">Search</button>
+      <div class="spinner" id="searchSpinner"></div>
+    </div>
+
+    <div class="search-results" id="searchResults"></div>
+
+    <div class="selected-song" id="selectedSong">
+      <img id="selectedArt" src="" alt="" />
+      <div class="info">
+        <div class="track" id="selectedTrack"></div>
+        <div class="artist" id="selectedArtist"></div>
+      </div>
+      <button class="clear" id="clearSong" title="Remove">✕</button>
+    </div>
+
+    <textarea id="captionInput" placeholder="What do you think about this song? Share your thoughts..."></textarea>
+    <input class="tags-input" id="tagsInput" type="text" placeholder="Tags (comma separated, e.g. indie, 90s, sad bops)" />
+
+    <button class="post-btn" id="postBtn" disabled>Post</button>
+  </div>
+</div>
+
+<!-- FEED -->
+<div class="layout">
+  <div id="feed"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ─── STATE ───────────────────────────────────────────────────────────────────
+  let posts = [];
+  try { posts = JSON.parse(localStorage.getItem('sb_posts') || '[]'); } catch(e) { posts = []; }
+  let selectedSongData = null;
+
+  function save() {
+    try { localStorage.setItem('sb_posts', JSON.stringify(posts)); } catch(e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ─── COMPOSE MODAL ──────────────────────────────────────────────────────────
+  const overlay = document.getElementById('overlay');
+  document.getElementById('openCompose').onclick = () => overlay.classList.add('open');
+  document.getElementById('closeModal').onclick = closeModal;
+  overlay.onclick = e => { if (e.target === overlay) closeModal(); };
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').innerHTML = '';
+    document.getElementById('searchResults').classList.remove('visible');
+    document.getElementById('captionInput').value = '';
+    document.getElementById('tagsInput').value = '';
+    clearSelectedSong();
+  }
+
+  function clearSelectedSong() {
+    selectedSongData = null;
+    document.getElementById('selectedSong').classList.remove('visible');
+    document.getElementById('postBtn').disabled = true;
+  }
+
+  document.getElementById('clearSong').onclick = clearSelectedSong;
+
+  // ─── ITUNES SEARCH ──────────────────────────────────────────────────────────
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+  document.getElementById('searchBtn').onclick = doSearch;
+
+  async function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+    const spinner = document.getElementById('searchSpinner');
+    const resultsEl = document.getElementById('searchResults');
+    spinner.classList.add('visible');
+    resultsEl.innerHTML = '';
+    resultsEl.classList.remove('visible');
+
+    try {
+      const res = await fetch(
+        `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=8`
+      );
+      const data = await res.json();
+      spinner.classList.remove('visible');
+
+      if (!data.results.length) {
+        resultsEl.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:0.88rem">No results found.</div>';
+        resultsEl.classList.add('visible');
+        return;
+      }
+
+      data.results.forEach(track => {
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        item.innerHTML = `
+          <img src="${track.artworkUrl60}" alt="" loading="lazy" />
+          <div class="result-info">
+            <div class="track">${esc(track.trackName)}</div>
+            <div class="artist">${esc(track.artistName)} · ${esc(track.collectionName || '')}</div>
+          </div>
+        `;
+        item.onclick = () => selectSong(track, item);
+        resultsEl.appendChild(item);
+      });
+      resultsEl.classList.add('visible');
+    } catch (err) {
+      spinner.classList.remove('visible');
+      resultsEl.innerHTML = '<div style="padding:14px;color:var(--danger);font-size:0.88rem">Search failed. Check your connection.</div>';
+      resultsEl.classList.add('visible');
+    }
+  }
+
+  function getEmbedUrl(trackViewUrl) {
+    try {
+      const url = new URL(trackViewUrl);
+      url.hostname = 'embed.music.apple.com';
+      url.pathname = url.pathname.replace(/\/album\/[^/]+\/(\d+)/, '/album/$1');
+      return url.toString();
+    } catch { return null; }
+  }
+
+  function selectSong(track, el) {
+    document.querySelectorAll('.result-item').forEach(r => r.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedSongData = {
+      id: track.trackId,
+      name: track.trackName,
+      artist: track.artistName,
+      album: track.collectionName || '',
+      art: track.artworkUrl100,
+      embedUrl: getEmbedUrl(track.trackViewUrl),
+    };
+    document.getElementById('selectedArt').src = selectedSongData.art;
+    document.getElementById('selectedTrack').textContent = selectedSongData.name;
+    document.getElementById('selectedArtist').textContent = selectedSongData.artist;
+    document.getElementById('selectedSong').classList.add('visible');
+    document.getElementById('postBtn').disabled = false;
+  }
+
+  // ─── CREATE POST ────────────────────────────────────────────────────────────
+  document.getElementById('postBtn').onclick = () => {
+    if (!selectedSongData) return;
+    const caption = document.getElementById('captionInput').value.trim();
+    const rawTags = document.getElementById('tagsInput').value;
+    const tags = rawTags.split(',').map(t => t.trim()).filter(Boolean);
+
+    const post = {
+      id: Date.now().toString(),
+      song: { ...selectedSongData },
+      caption,
+      tags,
+      likes: 0,
+      liked: false,
+      comments: [],
+      createdAt: Date.now(),
+    };
+
+    posts.unshift(post);
+    save();
+    renderFeed();
+    closeModal();
+    showToast('Post shared!');
+  };
+
+  // ─── RENDER FEED ────────────────────────────────────────────────────────────
+  function renderFeed() {
+    const feed = document.getElementById('feed');
+    if (!posts.length) {
+      feed.innerHTML = `
+        <div class="empty-state">
+          <strong>Nothing here yet.</strong>
+          Hit <em>+ New Post</em> to share the first song.
+        </div>`;
+      return;
+    }
+    feed.innerHTML = '';
+    posts.forEach(p => feed.appendChild(buildPostEl(p)));
+  }
+
+  function buildPostEl(post) {
+    const el = document.createElement('div');
+    el.className = 'post';
+    el.dataset.id = post.id;
+
+    el.innerHTML = `
+      <button class="delete-post" title="Delete post">🗑</button>
+
+      ${post.song.embedUrl ? `
+      <div class="am-embed">
+        <iframe
+          allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write"
+          height="175"
+          sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
+          src="${post.song.embedUrl}">
+        </iframe>
+      </div>` : `<div style="padding:14px 16px;background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);font-size:0.85rem">${esc(post.song.name)} — ${esc(post.song.artist)}</div>`
+      }
+
+      <div class="post-body">
+        ${post.caption ? `<div class="post-caption">${esc(post.caption)}</div>` : ''}
+        ${post.tags.length ? `<div class="post-tags">${post.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('')}</div>` : ''}
+      </div>
+
+      <div class="post-footer">
+        <span class="post-time">${timeAgo(post.createdAt)}</span>
+        <button class="action-btn like-btn ${post.liked ? 'liked' : ''}" title="Like">
+          <span class="icon">${post.liked ? '♥' : '♡'}</span>
+          <span class="like-count">${post.likes}</span>
+        </button>
+        <button class="action-btn comment-toggle" title="Comments">
+          <span class="icon">💬</span>
+          <span class="comment-count">${post.comments.length}</span>
+        </button>
+      </div>
+
+      <div class="comments-section">
+        <div class="comment-list"></div>
+        <div class="comment-form">
+          <input type="text" placeholder="Add a comment..." maxlength="300" />
+          <button>Send</button>
+        </div>
+      </div>
+    `;
+
+    // render existing comments
+    renderComments(el, post);
+
+    // delete post
+    el.querySelector('.delete-post').onclick = () => {
+      if (!confirm('Delete this post?')) return;
+      posts = posts.filter(p => p.id !== post.id);
+      save();
+      el.remove();
+      if (!posts.length) renderFeed();
+    };
+
+    // like
+    el.querySelector('.like-btn').onclick = () => {
+      const p = posts.find(x => x.id === post.id);
+      p.liked = !p.liked;
+      p.likes += p.liked ? 1 : -1;
+      save();
+      const btn = el.querySelector('.like-btn');
+      btn.classList.toggle('liked', p.liked);
+      btn.querySelector('.icon').textContent = p.liked ? '♥' : '♡';
+      btn.querySelector('.like-count').textContent = p.likes;
+    };
+
+    // toggle comments
+    const commentsSection = el.querySelector('.comments-section');
+    el.querySelector('.comment-toggle').onclick = () => {
+      commentsSection.classList.toggle('open');
+    };
+
+    // add comment
+    const commentInput = el.querySelector('.comment-form input');
+    const commentSend = el.querySelector('.comment-form button');
+    const addComment = () => {
+      const text = commentInput.value.trim();
+      if (!text) return;
+      const p = posts.find(x => x.id === post.id);
+      p.comments.push({ id: Date.now().toString(), text, createdAt: Date.now() });
+      save();
+      commentInput.value = '';
+      el.querySelector('.comment-count').textContent = p.comments.length;
+      renderComments(el, p);
+      commentsSection.classList.add('open');
+    };
+    commentSend.onclick = addComment;
+    commentInput.addEventListener('keydown', e => { if (e.key === 'Enter') addComment(); });
+
+    return el;
+  }
+
+  function renderComments(postEl, post) {
+    const list = postEl.querySelector('.comment-list');
+    list.innerHTML = '';
+    post.comments.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'comment';
+      div.innerHTML = `
+        <div class="comment-author">listener</div>
+        <div class="comment-text">${esc(c.text)}</div>
+        <button class="delete-comment" title="Delete">✕</button>
+      `;
+      div.querySelector('.delete-comment').onclick = () => {
+        const p = posts.find(x => x.id === post.id);
+        p.comments = p.comments.filter(x => x.id !== c.id);
+        save();
+        postEl.querySelector('.comment-count').textContent = p.comments.length;
+        renderComments(postEl, p);
+      };
+      list.appendChild(div);
+    });
+  }
+
+  // ─── HELPERS ────────────────────────────────────────────────────────────────
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function timeAgo(ts) {
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60) + 'm ago';
+    if (s < 86400) return Math.floor(s/3600) + 'h ago';
+    return Math.floor(s/86400) + 'd ago';
+  }
+
+  // ─── INIT ────────────────────────────────────────────────────────────────────
+  renderFeed();
+</script>
+</body>
+</html>
