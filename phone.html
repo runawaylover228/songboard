@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Phone · Songboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0e0e12; --surface: #1a1a22; --surface2: #22222e;
+      --border: #2e2e3e; --accent: #a78bfa; --accent2: #7c3aed;
+      --text: #e2e2f0; --muted: #888899; --danger: #f87171;
+      --green: #4ade80; --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .back-link {
+      position: fixed;
+      top: 16px; left: 16px;
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.3);
+      color: var(--accent);
+      border-radius: 10px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10;
+      transition: background 0.15s;
+    }
+    .back-link:hover { background: rgba(167,139,250,0.22); }
+
+    /* ── Phone chrome ── */
+    .phone {
+      width: 390px;
+      height: 844px;
+      max-height: calc(100vh - 32px);
+      background: #111118;
+      border-radius: 50px;
+      border: 2px solid #2a2a38;
+      box-shadow:
+        0 0 0 6px #0a0a0f,
+        0 0 0 8px #18181f,
+        0 48px 120px rgba(0,0,0,0.85),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Notch */
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 126px; height: 30px;
+      background: #111118;
+      border-radius: 0 0 22px 22px;
+      z-index: 20;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 15;
+    }
+    .status-time { font-size: 0.88rem; font-weight: 700; }
+    .status-icons { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; }
+
+    /* Content + tabs */
+    .screen-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .tab-bar {
+      display: flex;
+      border-top: 1px solid var(--border);
+      background: rgba(14,14,18,0.97);
+      flex-shrink: 0;
+      padding-bottom: 18px;
+    }
+    .tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0 4px;
+      gap: 3px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab.active { color: var(--accent); }
+    .tab-icon { font-size: 1.35rem; line-height: 1; }
+
+    /* Views */
+    .view {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+    }
+    .view.active { display: flex; }
+
+    /* ── Contacts ── */
+    .view-header {
+      padding: 20px 20px 10px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .contacts-search {
+      padding: 0 16px 10px;
+      flex-shrink: 0;
+    }
+    .contacts-search input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .contacts-search input::placeholder { color: var(--muted); }
+    .contacts-search input:focus { border-color: var(--accent); }
+
+    .contacts-list { padding: 0 8px 12px; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .contact-item:hover { background: var(--surface2); }
+    .contact-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .contact-info { flex: 1; overflow: hidden; }
+    .contact-name { font-weight: 700; font-size: 0.93rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .contact-handle { color: var(--muted); font-size: 0.78rem; margin-top: 1px; }
+    .call-icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(74,222,128,0.12);
+      border: 1px solid rgba(74,222,128,0.28);
+      color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .call-icon-btn:hover { background: rgba(74,222,128,0.28); }
+
+    /* ── Keypad ── */
+    .keypad-display {
+      padding: 28px 28px 8px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .keypad-number {
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: 5px;
+      min-height: 52px;
+      color: var(--text);
+      word-break: break-all;
+    }
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 12px 32px;
+      flex-shrink: 0;
+    }
+    .key {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s, transform 0.06s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .key:active { background: var(--border); transform: scale(0.91); }
+    .key-digit { font-size: 1.45rem; font-weight: 400; }
+    .key-letters { font-size: 0.58rem; color: var(--muted); letter-spacing: 1.5px; font-weight: 600; margin-top: 1px; }
+    .key.transparent-key { background: transparent; border-color: transparent; }
+
+    .keypad-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 4px 32px 16px;
+      flex-shrink: 0;
+    }
+    .keypad-actions > * { flex: 1; display: flex; justify-content: center; }
+    .key-call {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.06s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .key-call:hover { background: #22c55e; }
+    .key-call:active { transform: scale(0.91); }
+    .key-del {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--muted);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .key-del:active { color: var(--text); }
+
+    /* ── Recent ── */
+    .recent-list { padding: 0 8px 12px; }
+    .recent-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .recent-item:hover { background: var(--surface2); }
+    .recent-icon-wrap {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .recent-info { flex: 1; overflow: hidden; }
+    .recent-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .recent-meta { color: var(--muted); font-size: 0.76rem; margin-top: 2px; }
+    .recent-dur { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
+
+    /* ── Call overlays ── */
+    .call-overlay {
+      position: absolute; inset: 0; z-index: 50;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 72px 28px 44px;
+    }
+    .call-overlay.open { display: flex; }
+    .call-overlay.incoming  { background: linear-gradient(160deg,#131330 0%,#0f1e4a 100%); }
+    .call-overlay.outgoing  { background: linear-gradient(160deg,#160d2a 0%,#1a0550 100%); }
+    .call-overlay.connected { background: linear-gradient(160deg,#0a1f0f 0%,#0b2e18 100%); }
+
+    .call-caller {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 14px; text-align: center;
+    }
+    .call-avatar-lg {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 2.4rem;
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.07), 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .call-avatar-lg.ringing {
+      animation: ring-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes ring-pulse {
+      0%,100% { box-shadow: 0 0 0 6px rgba(255,255,255,0.07), 0 8px 40px rgba(0,0,0,0.5); }
+      50%      { box-shadow: 0 0 0 18px rgba(255,255,255,0.04), 0 8px 40px rgba(0,0,0,0.5); }
+    }
+    .call-name-lg { font-size: 1.75rem; font-weight: 800; }
+    .call-status-txt { color: rgba(255,255,255,0.55); font-size: 0.92rem; }
+    .call-timer { font-size: 1.05rem; color: rgba(255,255,255,0.8); font-variant-numeric: tabular-nums; letter-spacing: 1px; min-height: 1.5em; }
+
+    /* Action button grid */
+    .call-actions { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+    .call-row { display: flex; align-items: center; justify-content: center; gap: 28px; }
+    .call-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .call-btn-circle {
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      transition: transform 0.08s, opacity 0.15s;
+    }
+    .call-btn:active .call-btn-circle { transform: scale(0.88); }
+    .call-btn-lbl { font-size: 0.7rem; color: rgba(255,255,255,0.55); font-weight: 600; }
+
+    .cbtn-accept  .call-btn-circle { background: var(--green); color: #000; }
+    .cbtn-decline .call-btn-circle { background: var(--danger); color: #fff; }
+    .cbtn-end     .call-btn-circle { background: var(--danger); color: #fff; }
+    .cbtn-mute    .call-btn-circle { background: rgba(255,255,255,0.14); color: #fff; }
+    .cbtn-mute.active .call-btn-circle { background: var(--accent2); }
+    .cbtn-speaker .call-btn-circle { background: rgba(255,255,255,0.14); color: #fff; }
+    .cbtn-speaker.active .call-btn-circle { background: var(--accent2); }
+    .cbtn-hold    .call-btn-circle { background: rgba(255,255,255,0.14); color: #fff; }
+
+    /* ── Auth / loading screens ── */
+    .cover-screen {
+      position: absolute; inset: 0; z-index: 80;
+      background: var(--surface);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px; text-align: center; gap: 14px;
+    }
+    .cover-screen .icon { font-size: 2.8rem; }
+    .cover-screen h2 { font-size: 1.15rem; font-weight: 700; }
+    .cover-screen p { color: var(--muted); font-size: 0.86rem; line-height: 1.65; }
+    .cover-screen a, .cover-screen button {
+      display: inline-block;
+      background: var(--accent2); color: #fff;
+      border: none; border-radius: 10px;
+      padding: 11px 26px; font-size: 0.93rem; font-weight: 700;
+      text-decoration: none; cursor: pointer; font-family: inherit;
+      transition: background 0.15s;
+    }
+    .cover-screen a:hover, .cover-screen button:hover { background: var(--accent); }
+
+    /* Empty / loading states */
+    .empty-state {
+      text-align: center; color: var(--muted);
+      padding: 48px 20px; font-size: 0.88rem; line-height: 1.8;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 20px;
+      font-size: 0.88rem; transition: transform 0.28s;
+      z-index: 9999; pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Responsive: full-screen on small devices */
+    @media (max-width: 440px) {
+      body { padding: 0; }
+      .phone { width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; border: none; box-shadow: none; }
+      .back-link { top: 10px; left: 10px; }
+    }
+    @media (max-height: 900px) and (min-width: 441px) {
+      .phone { height: calc(100vh - 32px); border-radius: 36px; }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<a class="back-link" href="index.html">← Songboard</a>
+
+<div class="phone">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-time" id="statusTime">12:00</div>
+    <div class="status-icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor" opacity=".8"><rect x="0" y="4" width="3" height="8" rx="1"/><rect x="4.5" y="2.5" width="3" height="9.5" rx="1"/><rect x="9" y="1" width="3" height="11" rx="1"/><rect x="13.5" y="0" width="2.5" height="12" rx="1"/></svg>
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor" opacity=".8"><path d="M9 2.5C11.8 2.5 14.3 3.7 16 5.7L17.5 4C15.4 1.5 12.4 0 9 0S2.6 1.5.5 4L2 5.7C3.7 3.7 6.2 2.5 9 2.5z"/><path d="M9 6C10.9 6 12.6 6.8 13.8 8.1L15.3 6.4C13.7 4.7 11.5 3.7 9 3.7S4.3 4.7 2.7 6.4L4.2 8.1C5.4 6.8 7.1 6 9 6z"/><circle cx="9" cy="10.5" r="1.5"/></svg>
+      <svg width="24" height="12" viewBox="0 0 24 12" fill="none" opacity=".8"><rect x=".5" y=".5" width="20" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M22 4v4a2 2 0 000-4z" fill="currentColor" opacity=".5"/></svg>
+    </div>
+  </div>
+
+  <div class="screen-content">
+
+    <!-- Auth cover -->
+    <div class="cover-screen" id="authCover">
+      <div class="icon">📞</div>
+      <h2>Sign in to use Phone</h2>
+      <p>You need a Songboard account to make and receive calls from other users.</p>
+      <a href="index.html">Go to Songboard →</a>
+    </div>
+
+    <!-- Loading cover -->
+    <div class="cover-screen" id="loadingCover" style="display:none">
+      <div class="icon">📡</div>
+      <h2>Connecting…</h2>
+      <p>Setting up your phone.</p>
+    </div>
+
+    <!-- CONTACTS VIEW -->
+    <div class="view active" id="contactsView">
+      <div class="view-header">Contacts</div>
+      <div class="contacts-search">
+        <input type="search" id="contactSearch" placeholder="Search people…" autocomplete="off" />
+      </div>
+      <div class="contacts-list" id="contactsList">
+        <div class="empty-state">Loading contacts…</div>
+      </div>
+    </div>
+
+    <!-- KEYPAD VIEW -->
+    <div class="view" id="keypadView">
+      <div class="keypad-display">
+        <div class="keypad-number" id="keypadDisplay">&nbsp;</div>
+      </div>
+      <div class="keypad-grid" id="keypadGrid"></div>
+      <div class="keypad-actions">
+        <div><!-- spacer --></div>
+        <div><div class="key-call" id="keypadCallBtn" title="Call">📞</div></div>
+        <div><div class="key-del" id="keypadDel" title="Delete">⌫</div></div>
+      </div>
+    </div>
+
+    <!-- RECENT VIEW -->
+    <div class="view" id="recentView">
+      <div class="view-header">Recent</div>
+      <div class="recent-list" id="recentList">
+        <div class="empty-state">No recent calls yet.</div>
+      </div>
+    </div>
+
+    <!-- INCOMING CALL OVERLAY -->
+    <div class="call-overlay incoming" id="incomingOverlay">
+      <div class="call-caller">
+        <div class="call-avatar-lg ringing" id="incomingAvatar"></div>
+        <div class="call-name-lg" id="incomingName">Unknown</div>
+        <div class="call-status-txt">Incoming call…</div>
+        <div class="call-timer"></div>
+      </div>
+      <div class="call-actions">
+        <div class="call-row">
+          <div class="call-btn cbtn-decline" id="declineBtn">
+            <div class="call-btn-circle">📵</div>
+            <div class="call-btn-lbl">Decline</div>
+          </div>
+          <div class="call-btn cbtn-accept" id="acceptBtn">
+            <div class="call-btn-circle">📞</div>
+            <div class="call-btn-lbl">Accept</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTGOING CALL OVERLAY -->
+    <div class="call-overlay outgoing" id="outgoingOverlay">
+      <div class="call-caller">
+        <div class="call-avatar-lg ringing" id="outgoingAvatar"></div>
+        <div class="call-name-lg" id="outgoingName">Unknown</div>
+        <div class="call-status-txt">Calling…</div>
+        <div class="call-timer"></div>
+      </div>
+      <div class="call-actions">
+        <div class="call-row">
+          <div class="call-btn cbtn-end" id="cancelCallBtn">
+            <div class="call-btn-circle">📵</div>
+            <div class="call-btn-lbl">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTED CALL OVERLAY -->
+    <div class="call-overlay connected" id="connectedOverlay">
+      <div class="call-caller">
+        <div class="call-avatar-lg" id="connectedAvatar"></div>
+        <div class="call-name-lg" id="connectedName">Unknown</div>
+        <div class="call-status-txt" id="connectedStatus">Connected</div>
+        <div class="call-timer" id="callTimerEl"></div>
+      </div>
+      <div class="call-actions">
+        <div class="call-row">
+          <div class="call-btn cbtn-mute" id="muteBtn">
+            <div class="call-btn-circle">🎤</div>
+            <div class="call-btn-lbl">Mute</div>
+          </div>
+          <div class="call-btn cbtn-hold" id="holdBtn">
+            <div class="call-btn-circle">⏸</div>
+            <div class="call-btn-lbl">Hold</div>
+          </div>
+          <div class="call-btn cbtn-speaker" id="speakerBtn">
+            <div class="call-btn-circle">🔊</div>
+            <div class="call-btn-lbl">Speaker</div>
+          </div>
+        </div>
+        <div class="call-row">
+          <div class="call-btn cbtn-end" id="endCallBtn">
+            <div class="call-btn-circle">📵</div>
+            <div class="call-btn-lbl">End Call</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /screen-content -->
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab active" id="tab-contacts" onclick="switchTab('contacts')">
+      <div class="tab-icon">👥</div>
+      <div>Contacts</div>
+    </div>
+    <div class="tab" id="tab-keypad" onclick="switchTab('keypad')">
+      <div class="tab-icon">⌨️</div>
+      <div>Keypad</div>
+    </div>
+    <div class="tab" id="tab-recent" onclick="switchTab('recent')">
+      <div class="tab-icon">🕐</div>
+      <div>Recent</div>
+    </div>
+  </div>
+</div><!-- /phone -->
+
+<div class="toast" id="toast"></div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const SUPABASE_URL  = 'https://pkdxlbmvpocepmtggtha.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZHhsYm12cG9jZXBtdGdndGhhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNjE4MDMsImV4cCI6MjA5NDczNzgwM30.ZNn8jctqmasn11D1KMxOMsDX0Xv9BPu8ZYcsHE0C2Y4';
+
+const ICE_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+  ]
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let sb = null;
+let myUserId  = null;
+let myProfile = null;
+let contacts  = [];
+
+// WebRTC
+let peerConn       = null;
+let localStream    = null;
+let remoteAudio    = null;
+let outgoingCh     = null; // Supabase channel to send signals on
+let myCh           = null; // Supabase channel I receive signals on
+let pendingIce     = [];   // ICE candidates queued before remote desc is set
+let pendingOffer   = null; // stored offer while call is incoming
+
+// Call state machine: idle | outgoing | incoming | connected
+let callState  = 'idle';
+let callTarget = null;  // { id, name, color }
+let isMuted    = false;
+let callSecs   = 0;
+let callTimerId = null;
+
+// Ringtone
+let audioCtx = null;
+let ringtoneId = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function initial(name) { return String(name || '?')[0].toUpperCase(); }
+
+function toast(msg, dur = 2600) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+function updateClock() {
+  document.getElementById('statusTime').textContent =
+    new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateClock, 15000);
+updateClock();
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(name) {
+  ['contacts','keypad','recent'].forEach(n => {
+    document.getElementById(`tab-${n}`).classList.toggle('active', n === name);
+    document.getElementById(`${n}View`).classList.toggle('active', n === name);
+  });
+}
+
+// ── RINGTONE (Web Audio API) ──────────────────────────────────────────────────
+function playRingtone() {
+  stopRingtone();
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep() {
+      const osc  = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.frequency.value = 480;
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime + 0.38);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.46);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+    }
+    beep();
+    ringtoneId = setInterval(beep, 2000);
+  } catch(e) { /* audio blocked, silently skip */ }
+}
+function stopRingtone() {
+  if (ringtoneId) { clearInterval(ringtoneId); ringtoneId = null; }
+  if (audioCtx)  { audioCtx.close().catch(()=>{}); audioCtx = null; }
+}
+
+// ── CONTACTS ─────────────────────────────────────────────────────────────────
+async function loadContacts() {
+  if (!sb) return;
+  const { data, error } = await sb
+    .from('profiles')
+    .select('id, display_name, username, avatar_color')
+    .order('display_name');
+  if (error) { toast('Failed to load contacts'); return; }
+  contacts = (data || []).filter(c => c.id !== myUserId);
+  renderContacts(contacts);
+}
+
+function renderContacts(list) {
+  const el = document.getElementById('contactsList');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty-state">No contacts found.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  list.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'contact-item';
+    const color = c.avatar_color || '#7c3aed';
+    div.innerHTML = `
+      <div class="contact-avatar" style="background:${esc(color)}">${esc(initial(c.display_name))}</div>
+      <div class="contact-info">
+        <div class="contact-name">${esc(c.display_name)}</div>
+        <div class="contact-handle">@${esc(c.username || '')}</div>
+      </div>
+      <div class="call-icon-btn" title="Call ${esc(c.display_name)}">📞</div>`;
+    const callUser = { id: c.id, name: c.display_name, color };
+    div.querySelector('.call-icon-btn').addEventListener('click', e => {
+      e.stopPropagation(); initiateCall(callUser);
+    });
+    div.addEventListener('click', () => initiateCall(callUser));
+    el.appendChild(div);
+  });
+}
+
+document.getElementById('contactSearch').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  renderContacts(contacts.filter(c =>
+    (c.display_name || '').toLowerCase().includes(q) ||
+    (c.username || '').toLowerCase().includes(q)
+  ));
+});
+
+// ── KEYPAD ───────────────────────────────────────────────────────────────────
+const KEYS = [
+  {d:'1',l:''},{d:'2',l:'ABC'},{d:'3',l:'DEF'},
+  {d:'4',l:'GHI'},{d:'5',l:'JKL'},{d:'6',l:'MNO'},
+  {d:'7',l:'PQRS'},{d:'8',l:'TUV'},{d:'9',l:'WXYZ'},
+  {d:'*',l:''},{d:'0',l:'+'},{d:'#',l:''},
+];
+let dialStr = '';
+const keypadGrid = document.getElementById('keypadGrid');
+KEYS.forEach(({d, l}) => {
+  const key = document.createElement('div');
+  key.className = 'key';
+  key.innerHTML = `<div class="key-digit">${d}</div>${l ? `<div class="key-letters">${l}</div>` : ''}`;
+  key.addEventListener('click', () => {
+    dialStr += d;
+    document.getElementById('keypadDisplay').textContent = dialStr || ' ';
+  });
+  keypadGrid.appendChild(key);
+});
+document.getElementById('keypadDel').addEventListener('click', () => {
+  dialStr = dialStr.slice(0, -1);
+  document.getElementById('keypadDisplay').textContent = dialStr || ' ';
+});
+document.getElementById('keypadCallBtn').addEventListener('click', () => {
+  if (!dialStr) return;
+  // Match dial string against contacts by username
+  const match = contacts.find(c =>
+    (c.username || '').toLowerCase() === dialStr.toLowerCase() ||
+    (c.display_name || '').toLowerCase() === dialStr.toLowerCase()
+  );
+  if (match) {
+    initiateCall({ id: match.id, name: match.display_name, color: match.avatar_color || '#7c3aed' });
+  } else {
+    toast('Type a username to call — keypad dials contacts by name.');
+  }
+});
+
+// ── RECENT CALLS ─────────────────────────────────────────────────────────────
+function saveRecent(entry) {
+  try {
+    const list = JSON.parse(localStorage.getItem('phone_recent') || '[]');
+    list.unshift(entry);
+    localStorage.setItem('phone_recent', JSON.stringify(list.slice(0, 50)));
+  } catch(e) {}
+  renderRecent();
+}
+
+function renderRecent() {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem('phone_recent') || '[]'); } catch(e){}
+  const el = document.getElementById('recentList');
+  if (!list.length) { el.innerHTML = '<div class="empty-state">No recent calls yet.</div>'; return; }
+  el.innerHTML = '';
+  list.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'recent-item';
+    const icon = r.direction === 'outgoing' ? '↗️' : r.missed ? '📵' : '↙️';
+    const dur = r.secs > 0
+      ? `${Math.floor(r.secs/60)}:${String(r.secs%60).padStart(2,'0')}`
+      : (r.missed ? 'Missed' : '—');
+    const ago = timeAgo(r.ts);
+    div.innerHTML = `
+      <div class="recent-icon-wrap">${icon}</div>
+      <div class="recent-info">
+        <div class="recent-name">${esc(r.user?.name || 'Unknown')}</div>
+        <div class="recent-meta">${esc(ago)}</div>
+      </div>
+      <div class="recent-dur">${esc(dur)}</div>`;
+    div.addEventListener('click', () => { if (r.user?.id) initiateCall(r.user); });
+    el.appendChild(div);
+  });
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60)    return 'Just now';
+  if (s < 3600)  return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+// ── OVERLAY MANAGEMENT ────────────────────────────────────────────────────────
+function showOverlay(id) {
+  ['incomingOverlay','outgoingOverlay','connectedOverlay'].forEach(oid => {
+    document.getElementById(oid).classList.remove('open');
+  });
+  if (id) document.getElementById(id).classList.add('open');
+}
+
+function populateCallOverlays(user) {
+  const color = user.color || '#7c3aed';
+  const init  = initial(user.name);
+  ['incoming','outgoing','connected'].forEach(prefix => {
+    const av = document.getElementById(`${prefix}Avatar`);
+    const nm = document.getElementById(`${prefix}Name`);
+    if (av) { av.textContent = init; av.style.background = color; }
+    if (nm) nm.textContent = user.name;
+  });
+}
+
+// ── CALL TIMER ────────────────────────────────────────────────────────────────
+function startTimer() {
+  callSecs = 0;
+  callTimerId = setInterval(() => {
+    callSecs++;
+    const m = String(Math.floor(callSecs/60)).padStart(2,'0');
+    const s = String(callSecs % 60).padStart(2,'0');
+    document.getElementById('callTimerEl').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function stopTimer() {
+  if (callTimerId) { clearInterval(callTimerId); callTimerId = null; }
+  document.getElementById('callTimerEl').textContent = '';
+}
+
+// ── WEBRTC ───────────────────────────────────────────────────────────────────
+async function getLocalStream() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    return true;
+  } catch(e) {
+    toast('Microphone access denied — please allow mic permissions.');
+    return false;
+  }
+}
+
+function buildPeerConnection() {
+  peerConn = new RTCPeerConnection(ICE_CONFIG);
+
+  localStream.getTracks().forEach(t => peerConn.addTrack(t, localStream));
+
+  remoteAudio = document.createElement('audio');
+  remoteAudio.autoplay = true;
+  document.body.appendChild(remoteAudio);
+
+  peerConn.ontrack = ev => { remoteAudio.srcObject = ev.streams[0]; };
+
+  peerConn.onicecandidate = ev => {
+    if (ev.candidate && outgoingCh) {
+      sendOnOutgoing({ type: 'ice-candidate', candidate: ev.candidate, from: myUserId });
+    }
+  };
+
+  peerConn.onconnectionstatechange = () => {
+    const state = peerConn.connectionState;
+    if (state === 'connected') {
+      stopRingtone();
+      callState = 'connected';
+      document.getElementById('connectedStatus').textContent = 'Connected';
+      startTimer();
+      showOverlay('connectedOverlay');
+    } else if (['disconnected','failed','closed'].includes(state) && callState !== 'idle') {
+      endCall('Call ended');
+    }
+  };
+}
+
+// ── SIGNALING ─────────────────────────────────────────────────────────────────
+function sendOnOutgoing(payload) {
+  if (!outgoingCh) return;
+  outgoingCh.send({ type: 'broadcast', event: 'signal', payload }).catch(() => {});
+}
+
+async function openOutgoingChannel(targetUserId) {
+  if (outgoingCh) { sb.removeChannel(outgoingCh); outgoingCh = null; }
+  outgoingCh = sb.channel(`phone:${targetUserId}`, { config: { broadcast: { ack: false } } });
+  await new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('Channel timeout')), 8000);
+    outgoingCh.subscribe(status => {
+      if (status === 'SUBSCRIBED') { clearTimeout(t); resolve(); }
+      if (status === 'CHANNEL_ERROR') { clearTimeout(t); reject(new Error('Channel error')); }
+    });
+  });
+}
+
+function subscribeMyChannel() {
+  myCh = sb.channel(`phone:${myUserId}`, { config: { broadcast: { ack: false } } });
+  myCh
+    .on('broadcast', { event: 'signal' }, ({ payload }) => handleSignal(payload))
+    .subscribe();
+}
+
+async function handleSignal(sig) {
+  switch (sig.type) {
+    case 'call-offer':
+      if (callState !== 'idle') {
+        // Send busy
+        const busyCh = sb.channel(`phone:${sig.from}`);
+        busyCh.subscribe(s => {
+          if (s === 'SUBSCRIBED') {
+            busyCh.send({ type: 'broadcast', event: 'signal',
+              payload: { type: 'call-busy', from: myUserId } }).catch(()=>{});
+            setTimeout(() => sb.removeChannel(busyCh), 3000);
+          }
+        });
+        return;
+      }
+      callState  = 'incoming';
+      callTarget = { id: sig.from, name: sig.fromName || 'Unknown', color: sig.fromColor || '#7c3aed' };
+      pendingOffer = sig.offer;
+      pendingIce   = [];
+      populateCallOverlays(callTarget);
+      showOverlay('incomingOverlay');
+      playRingtone();
+      break;
+
+    case 'call-answer':
+      if (callState !== 'outgoing' || !peerConn) return;
+      await peerConn.setRemoteDescription(new RTCSessionDescription(sig.answer));
+      for (const c of pendingIce) {
+        await peerConn.addIceCandidate(new RTCIceCandidate(c)).catch(()=>{});
+      }
+      pendingIce = [];
+      break;
+
+    case 'ice-candidate':
+      if (!peerConn) return;
+      if (peerConn.remoteDescription) {
+        await peerConn.addIceCandidate(new RTCIceCandidate(sig.candidate)).catch(()=>{});
+      } else {
+        pendingIce.push(sig.candidate);
+      }
+      break;
+
+    case 'call-reject':
+      endCall('Call declined');
+      break;
+
+    case 'call-busy':
+      endCall('User is busy');
+      break;
+
+    case 'call-end':
+      endCall(callState === 'connected' ? 'Call ended' : null);
+      break;
+  }
+}
+
+// ── INITIATE CALL ─────────────────────────────────────────────────────────────
+async function initiateCall(user) {
+  if (callState !== 'idle') { toast('Already in a call'); return; }
+
+  const hasAudio = await getLocalStream();
+  if (!hasAudio) return;
+
+  callState  = 'outgoing';
+  callTarget = user;
+  populateCallOverlays(user);
+  showOverlay('outgoingOverlay');
+  playRingtone();
+
+  try {
+    await openOutgoingChannel(user.id);
+  } catch(e) {
+    endCall('Connection failed');
+    return;
+  }
+
+  buildPeerConnection();
+
+  const offer = await peerConn.createOffer();
+  await peerConn.setLocalDescription(offer);
+
+  sendOnOutgoing({
+    type: 'call-offer',
+    offer: peerConn.localDescription,
+    from: myUserId,
+    fromName:  myProfile?.displayName || 'Unknown',
+    fromColor: myProfile?.color || '#7c3aed',
+  });
+
+  // Auto-cancel after 30 s with no answer
+  setTimeout(() => { if (callState === 'outgoing') endCall('No answer'); }, 30000);
+}
+
+// ── ACCEPT ────────────────────────────────────────────────────────────────────
+async function acceptCall() {
+  if (callState !== 'incoming') return;
+  stopRingtone();
+
+  const hasAudio = await getLocalStream();
+  if (!hasAudio) { rejectCall(); return; }
+
+  callState = 'connected';
+  showOverlay('connectedOverlay');
+  document.getElementById('connectedStatus').textContent = 'Connecting…';
+
+  try {
+    await openOutgoingChannel(callTarget.id);
+  } catch(e) {
+    endCall('Connection failed');
+    return;
+  }
+
+  buildPeerConnection();
+  await peerConn.setRemoteDescription(new RTCSessionDescription(pendingOffer));
+  for (const c of pendingIce) {
+    await peerConn.addIceCandidate(new RTCIceCandidate(c)).catch(()=>{});
+  }
+  pendingIce = [];
+  pendingOffer = null;
+
+  const answer = await peerConn.createAnswer();
+  await peerConn.setLocalDescription(answer);
+
+  sendOnOutgoing({
+    type: 'call-answer',
+    answer: peerConn.localDescription,
+    from: myUserId,
+  });
+}
+
+// ── REJECT ────────────────────────────────────────────────────────────────────
+function rejectCall() {
+  if (callTarget) {
+    const rejCh = sb.channel(`phone:${callTarget.id}`);
+    rejCh.subscribe(s => {
+      if (s === 'SUBSCRIBED') {
+        rejCh.send({ type: 'broadcast', event: 'signal',
+          payload: { type: 'call-reject', from: myUserId } }).catch(()=>{});
+        setTimeout(() => sb.removeChannel(rejCh), 3000);
+      }
+    });
+  }
+  endCall(null);
+}
+
+// ── END CALL ─────────────────────────────────────────────────────────────────
+function endCall(message) {
+  if (callState === 'idle') return;
+
+  // Notify peer
+  if (outgoingCh && callState !== 'outgoing') {
+    sendOnOutgoing({ type: 'call-end', from: myUserId });
+  }
+
+  // Record to recent
+  if (callTarget) {
+    saveRecent({
+      user: callTarget,
+      direction: (callState === 'outgoing' || callState === 'connected') ? 'outgoing' : 'incoming',
+      missed: callState === 'incoming',
+      secs: callSecs,
+      ts: Date.now(),
+    });
+  }
+
+  // Cleanup
+  stopTimer();
+  stopRingtone();
+  if (peerConn)   { peerConn.close(); peerConn = null; }
+  if (localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  if (remoteAudio){ remoteAudio.srcObject = null; remoteAudio.remove(); remoteAudio = null; }
+  if (outgoingCh) { sb.removeChannel(outgoingCh); outgoingCh = null; }
+
+  callState  = 'idle';
+  callTarget = null;
+  callSecs   = 0;
+  pendingIce = [];
+  pendingOffer = null;
+  isMuted = false;
+  document.getElementById('muteBtn').classList.remove('active');
+  document.getElementById('muteBtn').querySelector('.call-btn-circle').textContent = '🎤';
+  document.getElementById('muteBtn').querySelector('.call-btn-lbl').textContent = 'Mute';
+
+  showOverlay(null);
+  if (message) toast(message);
+}
+
+// ── CALL CONTROLS ─────────────────────────────────────────────────────────────
+document.getElementById('acceptBtn').addEventListener('click', acceptCall);
+document.getElementById('declineBtn').addEventListener('click', rejectCall);
+document.getElementById('endCallBtn').addEventListener('click', () => endCall('Call ended'));
+document.getElementById('cancelCallBtn').addEventListener('click', () => endCall('Call cancelled'));
+
+document.getElementById('muteBtn').addEventListener('click', () => {
+  isMuted = !isMuted;
+  if (localStream) localStream.getAudioTracks().forEach(t => { t.enabled = !isMuted; });
+  const btn = document.getElementById('muteBtn');
+  btn.classList.toggle('active', isMuted);
+  btn.querySelector('.call-btn-circle').textContent = isMuted ? '🔇' : '🎤';
+  btn.querySelector('.call-btn-lbl').textContent    = isMuted ? 'Unmute' : 'Mute';
+});
+
+document.getElementById('speakerBtn').addEventListener('click', () => {
+  // Speaker toggle: Web API doesn't expose speaker selection cross-browser.
+  // Visual toggle only — future: setSinkId() when available.
+  const btn = document.getElementById('speakerBtn');
+  const on  = btn.classList.toggle('active');
+  btn.querySelector('.call-btn-lbl').textContent = on ? 'Speaker On' : 'Speaker';
+  toast(on ? 'Speaker on' : 'Speaker off');
+});
+
+document.getElementById('holdBtn').addEventListener('click', () => {
+  if (!localStream) return;
+  const tracks = localStream.getAudioTracks();
+  const held   = tracks.length > 0 && !tracks[0].enabled && !isMuted;
+  tracks.forEach(t => { t.enabled = held; }); // toggle
+  const btn    = document.getElementById('holdBtn');
+  const onHold = !held;
+  btn.classList.toggle('active', onHold);
+  document.getElementById('connectedStatus').textContent = onHold ? 'On Hold' : 'Connected';
+  toast(onHold ? 'Call on hold' : 'Call resumed');
+});
+
+// ── AUTH & INIT ───────────────────────────────────────────────────────────────
+async function init() {
+  document.getElementById('authCover').style.display    = 'none';
+  document.getElementById('loadingCover').style.display = 'flex';
+
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  } catch(e) {
+    document.getElementById('loadingCover').style.display = 'none';
+    document.getElementById('authCover').style.display    = 'flex';
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    document.getElementById('loadingCover').style.display = 'none';
+    document.getElementById('authCover').style.display    = 'flex';
+    return;
+  }
+
+  myUserId = session.user.id;
+
+  const { data: prof } = await sb.from('profiles').select('*').eq('id', myUserId).maybeSingle();
+  if (prof) myProfile = { displayName: prof.display_name, username: prof.username, color: prof.avatar_color };
+
+  subscribeMyChannel();
+  await loadContacts();
+  renderRecent();
+
+  // React to auth changes (logout in another tab)
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') {
+      if (callState !== 'idle') endCall(null);
+      document.getElementById('authCover').style.display = 'flex';
+    }
+  });
+
+  document.getElementById('loadingCover').style.display = 'none';
+}
+
+init();
+</script>
+</body>
+</html>
